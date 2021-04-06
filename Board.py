@@ -9,9 +9,6 @@ def black_piece_list():
     return ["black_king","black_queen","black_rook","black_bishop","black_knight","black_pawn"]
 
 
-
-
-
 class Board(UserDict):
     def __init__(self,first_player,board_dimensions) -> None:
         self.hash = self.get_hash_of_board()
@@ -27,7 +24,7 @@ class Board(UserDict):
     def get_board_heuristic(self):
         return 0
 
-    def in_board(self,coord):
+    def _in_board(self,coord):
 
         if coord[0] > self.board_dimensions[0] or coord[0] < 0:     # out of width bounds
             return False
@@ -36,54 +33,54 @@ class Board(UserDict):
         else:
             return True
 
-    def space_occupied_by_opponent(self,coord):
+    def _space_occupied_by_opponent(self,coord):
         return (self.data[coord] > 5 and self.first_player) or (self.data[coord] <= 5 and not self.first_player)
 
-    def space_empty(self,coord):
+    def _space_empty(self,coord):
         return not self.get(coord,-1) >= 0  #dict.get('key',default)
 
-    def valid_destination(self,move):
+    def _valid_destination(self,move):
 
         coord = move[0]
-        return self.in_board(coord) and (self.space_empty(coord) or self.space_occupied_by_opponent(coord))
+        return self._in_board(coord) and (self._space_empty(coord) or self._space_occupied_by_opponent(coord))
         
-    def cardinal_directions(self):
+    def _cardinal_directions(self):
         return ((0,1),(1,0),(0,-1),(-1,0))  # Up,Right,Down,Left
 
-    def diagonal_directions(self):
+    def _diagonal_directions(self):
         return ((1,1),(1,-1),(-1,-1),(-1,1)) # Up-Right, Down-Right, Down-Left, Up-Left
 
-    def knight_directions(self):
+    def _knight_directions(self):
         return ((1,2),(2,1),(2,-1),(1,-2),(-1,-2),(-2,-1),(-2,1),(-1,2))
 
-    def king_moves(self, move):
+    def _king_moves(self, move):
         coord = move[0]
         piece = move[1]
 
         moves = []
 
-        for direction in self.cardinal_directions()+self.diagonal_directions(): 
+        for direction in self._cardinal_directions()+self._diagonal_directions(): 
             move = tuple(map(sum,zip(coord,direction)),piece)  # Get destination
 
-            if self.valid_destination(move):
+            if self._valid_destination(move):
                 moves.append(move)
 
         return moves
 
-    def queen_moves(self, move):
+    def _queen_moves(self, move):
         coord = move[0]
         piece = move[1]
 
 
         moves = []
 
-        for direction in self.cardinal_directions()+self.diagonal_directions(): 
+        for direction in self._cardinal_directions()+self._diagonal_directions(): 
 
             while(True):
 
                 move = tuple(map(sum,zip(coord,direction)),piece)  # Get destination
 
-                if self.valid_destination(move):
+                if self._valid_destination(move):
                     moves.append(move)
 
                 else: 
@@ -91,19 +88,19 @@ class Board(UserDict):
 
         return moves
 
-    def rook_moves(self, move):
+    def _rook_moves(self, move):
         coord = move[0]
         piece = move[1]
 
         moves = []
 
-        for direction in self.cardinal_directions(): 
+        for direction in self._cardinal_directions(): 
 
             while(True):
 
                 move = tuple(map(sum,zip(coord,direction)),piece)  # Get destination
 
-                if self.valid_destination(move):
+                if self._valid_destination(move):
                     moves.append(move)
 
                 else: 
@@ -111,19 +108,19 @@ class Board(UserDict):
 
         return moves
 
-    def bishop_moves(self,move):
+    def _bishop_moves(self,move):
         coord = move[0]
         piece = move[1]
 
         moves = []
 
-        for direction in self.diagonal_directions(): 
+        for direction in self._diagonal_directions(): 
 
             while(True):
 
                 move = tuple(map(sum,zip(coord,direction)),piece)  # Get destination
 
-                if self.valid_destination(move):
+                if self._valid_destination(move):
                     moves.append(move)
 
                 else: 
@@ -131,21 +128,21 @@ class Board(UserDict):
 
         return moves
 
-    def knight_moves(self, move):
+    def _knight_moves(self, move):
             coord = move[0]
             piece = move[1]
 
             moves = []
 
-            for direction in self.knight_directions(): 
+            for direction in self._knight_directions(): 
                 move = tuple(map(sum,zip(coord,direction)),piece)  # Get destination
 
-                if self.valid_destination(move):
+                if self._valid_destination(move):
                     moves.append(move)
 
             return moves
 
-    def pawn_moves(self,move):
+    def _pawn_moves(self,move):
         coord = move[0]
         piece = move[1]
 
@@ -154,44 +151,44 @@ class Board(UserDict):
         if self.first_player: # white
 
             move = tuple(coord+(0,1),piece) # move up one space
-            if self.space_empty(move[0]) and self.in_board(move[0]):
+            if self._space_empty(move[0]) and self._in_board(move[0]):
                 moves.append(move)
 
                 if coord[1] == 1: # Pawn's first move can be 2 spaces if both unoccupied
                     move = tuple(coord+(0,2))
-                    if self.space_empty(move[0]) and self.in_board(move[0]):
+                    if self._space_empty(move[0]) and self._in_board(move[0]):
                         moves.append(move)
                         
             
             move = tuple(coord+(-1,1),piece) # capture up left
-            if self.space_occupied_by_opponent(move[0]) and self.in_board(move[0]):
+            if self._space_occupied_by_opponent(move[0]) and self._in_board(move[0]):
                 moves.append(move)
 
             move = tuple(coord+ (1,1),piece) # capture up right
-            if self.space_occupied_by_opponent(move[0]) and self.in_board(move[0]):
+            if self._space_occupied_by_opponent(move[0]) and self._in_board(move[0]):
                 moves.append(move)
 
         else:   # black
 
             move = tuple(coord+(0,-1),piece) # move down one space
-            if self.space_empty(move[0]) and self.in_board(move[0]):
+            if self._space_empty(move[0]) and self._in_board(move[0]):
                 moves.append(move)
 
                 if coord[1] == self.board_dimensions - 1: # Pawn's first move can be 2 spaces if both unoccupied
                     move = tuple(coord+(0,-2))
-                    if self.space_empty(move[0]) and self.in_board(move[0]):
+                    if self._space_empty(move[0]) and self._in_board(move[0]):
                         moves.append(move)
                         
             move = tuple(coord+(-1,-1),piece) # capture down left
-            if self.space_occupied_by_opponent(move[0]) and self.in_board(move[0]):
+            if self._space_occupied_by_opponent(move[0]) and self._in_board(move[0]):
                 moves.append(move)
 
             move = tuple(coord+ (1,-1),piece) # capture down right
-            if self.space_occupied_by_opponent(move[0]) and self.in_board(move[0]):
+            if self._space_occupied_by_opponent(move[0]) and self._in_board(move[0]):
                 moves.append(move)
 
 
-    def get_piece_moves(self,move): # moves are always tuple(tuple(x,y),piece)
+    def _get_piece_moves(self,move): # moves are always tuple(tuple(x,y),piece)
 
         piece = move[1]
 
@@ -199,23 +196,23 @@ class Board(UserDict):
         if self.first_player: 
             if piece == 0:      #king
 
-                return self.king_moves(move)
+                return self._king_moves(move)
 
             elif piece == 1:    #queen
-                return self.queen_moves(move)
+                return self._queen_moves(move)
 
             elif piece == 2:    #rook
 
-                return self.rook_moves(move)
+                return self._rook_moves(move)
 
             elif piece == 3:    #bishop
-                return self.bishop_moves(move)
+                return self._bishop_moves(move)
 
             elif piece == 4:    #knight
-                return self.knight_moves(move)
+                return self._knight_moves(move)
 
             elif piece == 5:    #pawn
-                return self.pawn_moves(move)
+                return self._pawn_moves(move)
                 
             else:
                 print("error: player id doesn't match piece.")
@@ -223,21 +220,21 @@ class Board(UserDict):
         else:
 
             if piece == 6:      #king
-                return self.king_moves(move)
+                return self._king_moves(move)
 
             elif piece == 7:    #queen
-                return self.queen_moves(move)
+                return self._queen_moves(move)
             elif piece == 8:    #rook
-                return self.rook_moves(move)
+                return self._rook_moves(move)
 
             elif piece == 9:    #bishop
-                return self.bishop_moves(move)
+                return self._bishop_moves(move)
 
             elif piece == 10:    #knight
-                return self.knight_moves(move)
+                return self._knight_moves(move)
 
             elif piece == 11:    #pawn
-                return self.pawn_moves(move)
+                return self._pawn_moves(move)
 
             else:
                 print("error: player id doesn't match piece.")
@@ -245,26 +242,31 @@ class Board(UserDict):
 
     def get_all_moves(self):
 
-        white_pieces,black_pieces = [],[]
+        player_pieces = []
+        moves = []
 
-        for piece in self.data.items: 
-            if piece[1] < 5: #if piece is white
-                white_pieces.append(piece)
-            else:   #else piece black
-                black_pieces.append(piece)
+        if self.first_player: # white player
 
-        if self.first_player:
-            for piece in white_pieces:
-                pass
-        else:
-            for piece in black_pieces:
-                pass
-            
-        
+            for piece in self.data.items: 
+                if piece[1] <= 5: #if piece is white
+                    player_pieces.append(piece)
+
+        else:   # black player
+             for piece in self.data.items: 
+                if piece[1] > 5: #if piece is black
+                    player_pieces.append(piece)
+
+        for piece in player_pieces:
+            moves.append(self._get_piece_moves(piece))
+
+class MapOfBoards():
+    def __init__(self) -> None:
+        self.boards = {}
+    
+    def add_board(self,board):
+        board_hash = board.get_hash_of_board()
+
+        self.boards[board_hash] = board
+        return board_hash
 
 
-
-
-class MapOfBoards(UserDict):
-    def __init__(self,) -> None:
-        pass
