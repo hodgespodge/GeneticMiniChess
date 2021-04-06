@@ -22,24 +22,31 @@ class Board(UserDict):
         return hash(self)
 
     def get_new_board_after_move(self,move):
-        return Board()
+        return Board(not self.first_player,self.board_dimensions)
 
     def get_board_heuristic(self):
         return 0
 
-    def valid_destination(self,move):
-
-        coord = move[0]
+    def in_board(self,coord):
 
         if coord[0] > self.board_dimensions[0] or coord[0] < 0:     # out of width bounds
             return False
         elif coord[1] > self.board_dimensions[1] or coord[1] < 1:   # out of height bounds
             return False
-        elif (self.data[coord] > 5 and self.first_player) or (self.data[coord] <= 5 and not self.first_player): # make sure tile is empty or occupied by other player
-            return False
+        else:
+            return True
 
-        return True
+    def space_occupied_by_opponent(self,coord):
+        return (self.data[coord] > 5 and self.first_player) or (self.data[coord] <= 5 and not self.first_player)
 
+    def space_empty(self,coord):
+        return not self.get(coord,-1) >= 0  #dict.get('key',default)
+
+    def valid_destination(self,move):
+
+        coord = move[0]
+        return self.in_board(coord) and (self.space_empty(coord) or self.space_occupied_by_opponent(coord))
+        
     def cardinal_directions(self):
         return ((0,1),(1,0),(0,-1),(-1,0))  # Up,Right,Down,Left
 
@@ -144,64 +151,96 @@ class Board(UserDict):
 
         moves = []
 
-        if self.first_player and coord[1] == 0: #has the white pawn moved?
-            pass
+        if self.first_player: # white
 
-        
-        elif not self.first_player and coord[1] == self.board_dimensions[1]: #has the black pawn moved?
-            pass
+            move = tuple(coord+(0,1),piece) # move up one space
+            if self.space_empty(move[0]) and self.in_board(move[0]):
+                moves.append(move)
+
+                if coord[1] == 1: # Pawn's first move can be 2 spaces if both unoccupied
+                    move = tuple(coord+(0,2))
+                    if self.space_empty(move[0]) and self.in_board(move[0]):
+                        moves.append(move)
+                        
             
-            
-                   
+            move = tuple(coord+(-1,1),piece) # capture up left
+            if self.space_occupied_by_opponent(move[0]) and self.in_board(move[0]):
+                moves.append(move)
+
+            move = tuple(coord+ (1,1),piece) # capture up right
+            if self.space_occupied_by_opponent(move[0]) and self.in_board(move[0]):
+                moves.append(move)
+
+        else:   # black
+
+            move = tuple(coord+(0,-1),piece) # move down one space
+            if self.space_empty(move[0]) and self.in_board(move[0]):
+                moves.append(move)
+
+                if coord[1] == self.board_dimensions - 1: # Pawn's first move can be 2 spaces if both unoccupied
+                    move = tuple(coord+(0,-2))
+                    if self.space_empty(move[0]) and self.in_board(move[0]):
+                        moves.append(move)
+                        
+            move = tuple(coord+(-1,-1),piece) # capture down left
+            if self.space_occupied_by_opponent(move[0]) and self.in_board(move[0]):
+                moves.append(move)
+
+            move = tuple(coord+ (1,-1),piece) # capture down right
+            if self.space_occupied_by_opponent(move[0]) and self.in_board(move[0]):
+                moves.append(move)
+
 
     def get_piece_moves(self,move): # moves are always tuple(tuple(x,y),piece)
 
-        coord = move[0]
         piece = move[1]
 
-        moves = []
 
         if self.first_player: 
             if piece == 0:      #king
 
-                moves += self.king_moves(move)
+                return self.king_moves(move)
 
             elif piece == 1:    #queen
+                return self.queen_moves(move)
 
-
-                pass   
             elif piece == 2:    #rook
-                pass
+
+                return self.rook_moves(move)
+
             elif piece == 3:    #bishop
-                pass
+                return self.bishop_moves(move)
+
             elif piece == 4:    #knight
-                pass
+                return self.knight_moves(move)
+
             elif piece == 5:    #pawn
-                pass
+                return self.pawn_moves(move)
+                
             else:
                 print("error: player id doesn't match piece.")
 
         else:
 
             if piece == 6:      #king
-                pass
+                return self.king_moves(move)
+
             elif piece == 7:    #queen
-                pass   
+                return self.queen_moves(move)
             elif piece == 8:    #rook
-                pass
+                return self.rook_moves(move)
+
             elif piece == 9:    #bishop
-                pass
+                return self.bishop_moves(move)
+
             elif piece == 10:    #knight
-                pass
+                return self.knight_moves(move)
+
             elif piece == 11:    #pawn
-                pass
+                return self.pawn_moves(move)
+
             else:
                 print("error: player id doesn't match piece.")
-
-
-
-
-        return 0
 
 
     def get_all_moves(self):
