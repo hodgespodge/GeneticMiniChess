@@ -20,3 +20,17 @@ class GameTree():
         self.root_node = StateNode(board_hash,self.mapOfBoards,current_depth=0,max_depth=max_depth)
         # self.target_depth = None #int
         
+class Player():
+
+    def __init__(self, heuristic_coefficients = [], max_search_depth = 3, initial_board = [],first_player = True):
+        
+        self.heuristic_coefficients = heuristic_coefficients
+        self.max_search_depth = max_search_depth
+        self.initial_board = initial_board
+        self.first_player = first_player
+
+    def get_move(self,current_board,first_player):
+
+        move = ((1,1),0)
+
+        return move
