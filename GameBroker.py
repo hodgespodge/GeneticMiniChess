@@ -1,4 +1,6 @@
-from GameTree import Player, Board
+from GameTree import Player
+
+from Board import Board, get_new_board_after_move
 
 class GameBroker():
 
@@ -9,8 +11,8 @@ class GameBroker():
         self.max_search_depth = max_search_depth
         self.initial_board = initial_board
 
-        self.white_player = Player(heuristic_coefficients=self.white_heuristic_coefficients,max_search_depth=self.max_search_depth,initial_board=self.initial_board)
-        self.black_player = Player(heuristic_coefficients=self.black_heuristic_coefficients,max_search_depth=self.max_search_depth,initial_board=self.initial_board)
+        self.white_player = Player(heuristic_coefficients=self.white_heuristic_coefficients,max_search_depth=self.max_search_depth)
+        self.black_player = Player(heuristic_coefficients=self.black_heuristic_coefficients,max_search_depth=self.max_search_depth)
 
         
     def simulate_game(self):
@@ -19,10 +21,12 @@ class GameBroker():
 
         while(True):
 
-            board = board.get_new_board_after_move()
+            white_move = self.white_player.get_move(board,first_player = True)
 
-            board = self.white_player.get_move(board,first_player = True)
+            board = get_new_board_after_move(board, white_move, first_player= True)
 
-            board = self.black_player.get_move(board,first_player = False)
-    
+            black_move = self.black_player.get_move(board, first_player= False)
+
+            board = get_new_board_after_move(board, black_move, first_player= False)
+
     

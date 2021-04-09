@@ -64,7 +64,7 @@ class Board(UserDict):
         moves = []
 
         for direction in self._cardinal_directions()+self._diagonal_directions(): 
-            move = tuple(loc_piece[0],map(sum,zip(coord,direction)),piece)  # Get destination
+            move = tuple(coord,map(sum,zip(coord,direction)),piece)  # Get destination
 
             if self._valid_destination(move,first_player):
                 moves.append(move)
@@ -82,7 +82,7 @@ class Board(UserDict):
 
             while(True):
 
-                move = tuple(loc_piece[0],map(sum,zip(coord,direction)),piece)  # Get destination
+                move = tuple(coord,map(sum,zip(coord,direction)),piece)  # Get destination
 
                 if self._valid_destination(move,first_player):
                     moves.append(move)
@@ -102,7 +102,7 @@ class Board(UserDict):
 
             while(True):
 
-                move = tuple(loc_piece[0],map(sum,zip(coord,direction)),piece)  # Get destination
+                move = tuple(coord,map(sum,zip(coord,direction)),piece)  # Get destination
 
                 if self._valid_destination(move,first_player):
                     moves.append(move)
@@ -122,7 +122,7 @@ class Board(UserDict):
 
             while(True):
 
-                move = tuple(loc_piece[0],map(sum,zip(coord,direction)),piece)  # Get destination
+                move = tuple(coord,map(sum,zip(coord,direction)),piece)  # Get destination
 
                 if self._valid_destination(move,first_player):
                     moves.append(move)
@@ -139,7 +139,7 @@ class Board(UserDict):
         moves = []
 
         for direction in self._knight_directions(): 
-            move = tuple(loc_piece[0],map(sum,zip(coord,direction)),piece)  # Get destination
+            move = tuple(coord,map(sum,zip(coord,direction)),piece)  # Get destination
 
             if self._valid_destination(move,first_player):
                 moves.append(move)
@@ -154,41 +154,41 @@ class Board(UserDict):
 
         if first_player: # white
 
-            move = tuple(loc_piece[0],coord+(0,1),piece) # move up one space
-            if self._space_empty(move[0]) and self._in_board(move[0]):
+            move = tuple(coord,coord+(0,1),piece) # move up one space
+            if self._space_empty(move[1]) and self._in_board(move[1]):
                 moves.append(move)
 
                 if coord[1] == 1: # Pawn's first move can be 2 spaces if both unoccupied
-                    move = tuple(loc_piece[0],coord+(0,2))
-                    if self._space_empty(move[0]) and self._in_board(move[0]):
+                    move = tuple(coord,coord+(0,2),piece)
+                    if self._space_empty(move[1]) and self._in_board(move[1]):
                         moves.append(move)
                         
             
-            move = tuple(loc_piece[0],coord+(-1,1),piece) # capture up left
-            if self._space_occupied_by_opponent(move[0],first_player) and self._in_board(move[0]):
+            move = tuple(coord,coord+(-1,1),piece) # capture up left
+            if self._space_occupied_by_opponent(move[1],first_player) and self._in_board(move[1]):
                 moves.append(move)
 
-            move = tuple(loc_piece[0],coord+ (1,1),piece) # capture up right
-            if self._space_occupied_by_opponent(move[0],first_player) and self._in_board(move[0]):
+            move = tuple(coord,coord+ (1,1),piece) # capture up right
+            if self._space_occupied_by_opponent(move[1],first_player) and self._in_board(move[1]):
                 moves.append(move)
 
         else:   # black
 
-            move = tuple(loc_piece[0],coord+(0,-1),piece) # move down one space
-            if self._space_empty(move[0]) and self._in_board(move[0]):
+            move = tuple(coord,coord+(0,-1),piece) # move down one space
+            if self._space_empty(move[1]) and self._in_board(move[1]):
                 moves.append(move)
 
                 if coord[1] == self.board_dimensions - 1: # Pawn's first move can be 2 spaces if both unoccupied
-                    move = tuple(loc_piece[0],coord+(0,-2))
-                    if self._space_empty(move[0]) and self._in_board(move[0]):
+                    move = tuple(coord,coord+(0,-2),piece)
+                    if self._space_empty(move[1]) and self._in_board(move[1]):
                         moves.append(move)
                         
-            move = tuple(loc_piece[0],coord+(-1,-1),piece) # capture down left
-            if self._space_occupied_by_opponent(move[0],first_player) and self._in_board(move[0]):
+            move = tuple(coord,coord+(-1,-1),piece) # capture down left
+            if self._space_occupied_by_opponent(move[1],first_player) and self._in_board(move[1]):
                 moves.append(move)
 
-            move = tuple(loc_piece[0],coord+ (1,-1),piece) # capture down right
-            if self._space_occupied_by_opponent(move[0],first_player) and self._in_board(move[0]):
+            move = tuple(coord,coord+ (1,-1),piece) # capture down right
+            if self._space_occupied_by_opponent(move[1],first_player) and self._in_board(move[1]):
                 moves.append(move)
 
 
@@ -261,15 +261,4 @@ class Board(UserDict):
 
         for piece in player_pieces:
             moves.append(self._get_piece_moves(piece,first_player))
-
-class MapOfBoards():
-    def __init__(self) -> None:
-        self.boards = {}
-    
-    def add_board(self,board):
-        board_hash = board.get_hash_of_board()
-
-        self.boards[board_hash] = board
-        return board_hash
-
 
