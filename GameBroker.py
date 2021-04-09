@@ -4,7 +4,7 @@ from Board import Board, get_new_board_after_move
 
 class GameBroker():
 
-    def __init__(self, white_heuristic_coefficients = [], black_heuristic_coefficients = [], max_search_depth = 3, initial_board = []):
+    def __init__(self, white_heuristic_coefficients = None, black_heuristic_coefficients = None, max_search_depth = 3, initial_board = None):
         
         self.white_heuristic_coefficients = white_heuristic_coefficients
         self.black_heuristic_coefficients = black_heuristic_coefficients

@@ -262,3 +262,4 @@ class Board(UserDict):
         for piece in player_pieces:
             moves.append(self._get_piece_moves(piece,first_player))
 
+        return moves
