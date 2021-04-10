@@ -23,7 +23,7 @@ class Board(UserDict):
         self.board_dimensions = board_dimensions #Tuple(width,heigh)
   
     def get_hash_of_board(self):
-        return hash(self)
+        return hash(self.data)
 
     def get_board_heuristic(self):
         return 0
