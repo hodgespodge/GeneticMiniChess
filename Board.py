@@ -154,8 +154,13 @@ class Board(UserDict):
 
         if first_player: # white
 
+            if coord[1] + 1 == self.board_dimensions[1]: # If pawn would reach end of board by moving up, always promote to queen
+    
+                piece = 1 # White Queen
+
             move = tuple(coord,coord+(0,1),piece) # move up one space
             if self._space_empty(move[1]) and self._in_board(move[1]):
+                
                 moves.append(move)
 
                 if coord[1] == 1: # Pawn's first move can be 2 spaces if both unoccupied
@@ -174,11 +179,15 @@ class Board(UserDict):
 
         else:   # black
 
+            if coord[1] - 1 == 0: # If pawn would reach end of board by moving up, always promote to queen
+    
+                piece = 7 # Black queen
+
             move = tuple(coord,coord+(0,-1),piece) # move down one space
             if self._space_empty(move[1]) and self._in_board(move[1]):
                 moves.append(move)
 
-                if coord[1] == self.board_dimensions - 1: # Pawn's first move can be 2 spaces if both unoccupied
+                if coord[1] == self.board_dimensions[1] - 1: # Pawn's first move can be 2 spaces if both unoccupied
                     move = tuple(coord,coord+(0,-2),piece)
                     if self._space_empty(move[1]) and self._in_board(move[1]):
                         moves.append(move)
