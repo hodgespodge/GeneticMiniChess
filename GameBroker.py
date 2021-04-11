@@ -4,16 +4,14 @@ from Board import Board, get_new_board_after_move
 
 class GameBroker():
 
-    def __init__(self, white_heuristic_coefficients = None, black_heuristic_coefficients = None, max_search_depth = 3, initial_board = None):
+    def __init__(self, white_heuristic_coefficients = None, black_heuristic_coefficients = None, max_search_time = 3, initial_board = None):
         
         self.white_heuristic_coefficients = white_heuristic_coefficients
         self.black_heuristic_coefficients = black_heuristic_coefficients
-        self.max_search_depth = max_search_depth
         self.initial_board = initial_board
 
-        self.white_player = Player(heuristic_coefficients=self.white_heuristic_coefficients,max_search_depth=self.max_search_depth)
-        self.black_player = Player(heuristic_coefficients=self.black_heuristic_coefficients,max_search_depth=self.max_search_depth)
-
+        self.white_player = Player(self.black_heuristic_coefficients, max_search_time)
+        self.black_player = Player(self.white_heuristic_coefficients, max_search_time)
         
     def simulate_game(self):
 

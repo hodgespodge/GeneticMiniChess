@@ -17,6 +17,23 @@ def get_new_board_after_move(board,move,first_player):
 
     return new_board
 
+# heuristic_coefficients will be in this order: 
+# 0-6   ["white_king","white_queen","white_rook","white_bishop","white_knight","white_pawn"]
+# 7-11  ["black_king","black_queen","black_rook","black_bishop","black_knight","black_pawn"]
+
+def get_board_heuristic(board,heuristic_coefficients):
+
+    score = 0
+
+    for piece in board.values():
+
+        if piece < 7:
+            score += heuristic_coefficients[piece] # Add points for white
+        else:
+            score -= heuristic_coefficients[piece % 7] # Subtract points for black
+
+    return score
+
 class Board(UserDict):
     def __init__(self,board_dimensions) -> None:
         self.hash = self.get_hash_of_board()
@@ -24,9 +41,6 @@ class Board(UserDict):
   
     def get_hash_of_board(self):
         return hash(self.data)
-
-    def get_board_heuristic(self):
-        return 0
 
     def _in_board(self,coord):
 
