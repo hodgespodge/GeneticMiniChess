@@ -1,6 +1,6 @@
 from GameTree import Player
 
-from Board import Board, get_new_board_after_move, game_over
+from Board import Board, get_new_board_after_move, game_over, print_board, get_english_notation
 
 class GameBroker():
 
@@ -17,14 +17,20 @@ class GameBroker():
 
         board = self.initial_board
 
+        if verbose:
+            # print(board)
+            print_board(board)
+
         while(True):
 
             white_move = self.white_player.get_move(board,first_player = True,verbose=verbose)
+            # print("white move:",white_move)
+            print("White: ",get_english_notation(white_move))
 
             board = get_new_board_after_move(board, white_move, first_player= True)
 
             if verbose:
-                print(board)
+                print_board(board)
 
             check_mate, winner = game_over(board=board)
             if check_mate:
@@ -32,11 +38,14 @@ class GameBroker():
 
             black_move = self.black_player.get_move(board, first_player= False, verbose=verbose)
 
+            print("Black: ",get_english_notation(black_move))
             board = get_new_board_after_move(board, black_move, first_player= False)
 
             if verbose:
-                print(board)
+                print_board(board)
 
             check_mate, winner = game_over(board=board)
             if check_mate:
                 return winner
+
+   
