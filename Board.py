@@ -17,9 +17,17 @@ def get_new_board_after_move(board,move,first_player):
 
     return new_board
 
+def game_over(board):
+
+    if not ( 0 in board.values()): # is white king missing?
+        return True, 1 # black wins
+    elif not ( 5 in board.values()): # is black king missing?
+        return True, 0 # white wins
+    else:
+        return False, -1
+
 # heuristic_coefficients will be in this order: 
-# 0-6   ["white_king","white_queen","white_rook","white_bishop","white_knight","white_pawn"]
-# 7-11  ["black_king","black_queen","black_rook","black_bishop","black_knight","black_pawn"]
+# 0-5   ["king","queen","rook","bishop","knight","pawn"]
 
 def get_board_heuristic(board,heuristic_coefficients):
 
@@ -30,7 +38,7 @@ def get_board_heuristic(board,heuristic_coefficients):
         if piece < 7:
             score += heuristic_coefficients[piece] # Add points for white
         else:
-            score -= heuristic_coefficients[piece % 7] # Subtract points for black
+            score -= heuristic_coefficients[piece % 6] # Subtract points for black
 
     return score
 
