@@ -10,22 +10,22 @@ class GameBroker():
         self.black_heuristic_coefficients = black_heuristic_coefficients
         self.initial_board = initial_board
 
-        self.white_player = Player(self.black_heuristic_coefficients, max_search_time)
-        self.black_player = Player(self.white_heuristic_coefficients, max_search_time)
+        self.white_player = Player(self.white_heuristic_coefficients, max_search_time)
+        self.black_player = Player(self.black_heuristic_coefficients, max_search_time)
         
     def simulate_game(self,verbose = False):
 
         board = self.initial_board
 
         if verbose:
-            # print(board)
             print_board(board)
 
         while(True):
 
             white_move = self.white_player.get_move(board,first_player = True,verbose=verbose)
-            # print("white move:",white_move)
-            print("White: ",get_english_notation(white_move))
+            if verbose:
+
+                print("White: ",get_english_notation(white_move))
 
             board = get_new_board_after_move(board, white_move, first_player= True)
 
@@ -38,7 +38,9 @@ class GameBroker():
 
             black_move = self.black_player.get_move(board, first_player= False, verbose=verbose)
 
-            print("Black: ",get_english_notation(black_move))
+            if verbose:
+                print("Black: ",get_english_notation(black_move))
+            
             board = get_new_board_after_move(board, black_move, first_player= False)
 
             if verbose:

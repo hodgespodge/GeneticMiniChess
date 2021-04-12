@@ -4,7 +4,9 @@ import time
   
 def tt_flag_dict():
     return {"EXACT": 0, "LOWERBOUND": 1, "UPPERBOUND": 2}
-    
+
+# TODO must program in check for 3 of same move in a row
+
 class GameTree():
 
     def __init__(self,heuristic_coefficients):
@@ -30,9 +32,6 @@ class GameTree():
         iterative_depth  = 1
         while (True):
 
-            # print(time.time() - start_time,":", iterative_depth)
-
-
             if time.time() - start_time > max_search_time:
                 break
             else:
@@ -42,11 +41,14 @@ class GameTree():
                 iterative_depth += 1
         ################
 
+        print(first_player,"searched to depth",iterative_depth)
 
         best_value = self.transposition_table[children[0][0]][1] # use hash of first child to get its minmax score
         best_move = children[0][1]  # default best move is move of first child
 
         for child in children:
+
+            # print("child:",child,"  Value:",self.transposition_table[child[0]][1])
 
             if self.transposition_table[child[0]][1] > best_value:
                 best_value = self.transposition_table[child[0]][1]
@@ -56,12 +58,9 @@ class GameTree():
 
     def root_negamax(self,board_hash,depth,alpha,beta,first_player,verbose=False):
 
-        # print("negamax called with depth",depth)
-
         alphaOrig = alpha
 
         ttEntry = self.transposition_table[board_hash]
-
     
         if ttEntry[2] >= depth and ttEntry[3] != None: # TT depth
             if ttEntry[3] == tt_flag_dict()["EXACT"]: # TT Flag
@@ -84,7 +83,7 @@ class GameTree():
                 return 1 * get_board_heuristic(ttEntry,self.heuristic_coefficients)
             else:
                 return -1 * get_board_heuristic(ttEntry,self.heuristic_coefficients)
-        
+
         childNodes = self.generate_ordered_children(board=ttEntry[0],first_player=first_player)
         
         value = float("-inf")
@@ -92,7 +91,7 @@ class GameTree():
         for child in childNodes:
 
             child_hash = child[1]
-            value = max(value,self.negamax(child_hash,depth-1,alpha=-beta,beta=-alpha,first_player= not first_player,verbose=verbose))
+            value = max(value,-self.negamax(child_hash,depth-1,alpha=-beta,beta=-alpha,first_player= not first_player,verbose=verbose))
             alpha = max(alpha,value)
 
             if alpha >= beta:
@@ -136,7 +135,6 @@ class GameTree():
             if first_player:
                 return 1 * get_board_heuristic(ttEntry[0],self.heuristic_coefficients)
             else:
-
                 return -1 * get_board_heuristic(ttEntry[0],self.heuristic_coefficients)
 
         childNodes = self.generate_ordered_children(board=ttEntry[0],first_player=first_player)
@@ -146,7 +144,7 @@ class GameTree():
         for child in childNodes:
 
             child_hash = child[1]
-            value = max(value,self.negamax(child_hash,depth-1,alpha=-beta,beta=-alpha,first_player= not first_player))
+            value = max(value, -self.negamax(child_hash,depth-1,alpha=-beta,beta=-alpha,first_player= not first_player))
             alpha = max(alpha,value)
 
             if alpha >= beta:

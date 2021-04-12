@@ -6,7 +6,7 @@ from math import pow
 
 def print_board(board):
     board_dimensions = board.board_dimensions
-    for y in range(board_dimensions[1]+1):
+    for y in range(board_dimensions[1],-1,-1):
         for x in range(board_dimensions[0]+1):
             piece = (board.get((x,y),None))
 
@@ -18,9 +18,9 @@ def print_board(board):
             if piece != None:
 
                 if piece > 5:
-                    player_color = 42
+                    player_color = 0
                 else:
-                    player_color = 47
+                    player_color = 100
                 tile = '\x1b[3;{0};{1}m'.format(player_color, square_color)
                 tile += piece_unicode_list()[piece]+" "+'\x1b[0m'
                 # print('\x1b[6;30;42m'+piece_unicode_list()[piece]+" "+'\x1b[0m',end="")
@@ -47,6 +47,7 @@ def get_english_notation(move):
 
 def piece_unicode_list(): # pieces are numbered 0-11
     return ["\u2654","\u2655","\u2656","\u2657","\u2658","\u2659","\u265A","\u265B","\u265C","\u265D","\u265E","\u265F"]
+
 
 def alphabet():
     return ["a","b","c","d","e","f","g","h","i","j"]
@@ -75,11 +76,11 @@ def get_new_board_after_move(board,move,first_player):
 def game_over(board):
 
     if not ( 0 in board.values()): # is white king missing?
-        return True, 1 # black wins
-    elif not ( 5 in board.values()): # is black king missing?
-        return True, 0 # white wins
+        return True, -1 # black wins
+    elif not ( 6 in board.values()): # is black king missing?
+        return True, 1 # white wins
     else:
-        return False, -1
+        return False, 0
 
 # heuristic_coefficients will be in this order: 
 # 0-5   ["king","queen","rook","bishop","knight","pawn"]
@@ -90,10 +91,10 @@ def get_board_heuristic(board,heuristic_coefficients):
 
     for piece in board.values():
 
-        if piece < 5:
+        if piece <= 5:
             score += heuristic_coefficients[piece] # Add points for white
         else:
-            score -= heuristic_coefficients[piece % 5] # Subtract points for black
+            score -= heuristic_coefficients[piece % 6] # Subtract points for black
 
     return score
 
@@ -103,28 +104,36 @@ class Board(dict):
         self.board_dimensions = board_dimensions #Tuple(width,heigh)
   
     def _hash_(self):
-        i = 0
-        hash = 0
-        for item in self.items():
+        # i = 0
+        # hash = 0
 
-            x = item[0][0]
-            y = item[0][1]
-            p = item[1]
+        items = sorted(self.items(), key = lambda x : x[0][0] + 12*x[0][1])
 
-            hash += pow(x * 12,y) + p
+        return hash(frozenset(items))
 
-            i += 1
-        hash = hash // i
+        # for item in items:
+        #     x = item[0][0]
+        #     y = item[0][1]
+        #     p = item[1]
 
-        return int(hash)
+        #     hash += pow((x+1) * 13 , y) + p
+
+        #     i += 1
+        # hash = hash // i
+
+        # return int(hash)
 
     def get_board_hash(self,first_player):
 
-        if first_player:
+        items = sorted(self.items(), key = lambda x : x[0][0] + 12*x[0][1])
 
-            return self._hash_() 
-        else:
-            return self._hash_() * -1
+        return hash(frozenset(items))
+
+        # if first_player:
+
+        #     return self._hash_() 
+        # else:
+        #     return self._hash_() * -1
 
     def _in_board(self,coord):
 
@@ -191,6 +200,9 @@ class Board(dict):
                 if self._valid_destination(move,first_player):
                     moves.append(move)
 
+                    if self._space_occupied_by_opponent(move[1],first_player):
+                        break
+
                 else: 
                     break
 
@@ -204,7 +216,7 @@ class Board(dict):
 
         for direction in self._cardinal_directions(): 
 
-            move =( coord,coord,piece)
+            move = ( coord,coord,piece)
 
             while(True):
 
@@ -212,6 +224,9 @@ class Board(dict):
 
                 if self._valid_destination(move,first_player):
                     moves.append(move)
+
+                    if self._space_occupied_by_opponent(move[1],first_player):
+                        break
 
                 else: 
                     break
@@ -234,6 +249,9 @@ class Board(dict):
                 if self._valid_destination(move,first_player):
                     moves.append(move)
 
+                    if self._space_occupied_by_opponent(move[1],first_player):
+                        break
+
                 else: 
                     break
 
@@ -253,6 +271,7 @@ class Board(dict):
 
         return moves
 
+    # TODO pawn moves are still probably fucked up
     def _pawn_moves(self,loc_piece,first_player): 
         coord = loc_piece[0]
         piece = loc_piece[1]
