@@ -41,7 +41,9 @@ class GameTree():
                 iterative_depth += 1
         ################
 
-        print(first_player,"searched to depth",iterative_depth)
+        if verbose:
+
+            print(first_player,"searched to depth",iterative_depth)
 
         best_value = self.transposition_table[children[0][0]][1] # use hash of first child to get its minmax score
         best_move = children[0][1]  # default best move is move of first child
