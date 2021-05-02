@@ -8,7 +8,7 @@ Created on Tue Apr 27 10:22:51 2021
 import random
 import copy
 import datetime
-from SimulateGame.py import GA_simulate
+from GA_simulate import GA_simulate
 
 fitness = {}
 m_type = ""
@@ -29,7 +29,8 @@ testing = ""
 
 
 #Should we have a time limit? if at time return best have
-def geneticAlgorithm(mutation_type, selection_type, reproduction_type, mutation_rate, is_testing, initial_input_file):
+def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selection_type = 'roulette', reproduction_type = 'single_point', mutation_rate= 5, is_testing= 'T'):
+
     if is_testing == "T":
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
@@ -44,7 +45,7 @@ def geneticAlgorithm(mutation_type, selection_type, reproduction_type, mutation_
     
     initialPopulation = []
     
-    if initial_input_file != "F":
+    if not initial_input_file:
         file = open(initial_input_file,"r")
         line = file.readLine(12)
         arr = line.split()
@@ -114,6 +115,8 @@ def eval_fitness(children):
 
 
 def geneticAlg(population):
+
+    # global generation_count
     
     if testing == "T":
         print("Initial Generation: 0 Population \n")
