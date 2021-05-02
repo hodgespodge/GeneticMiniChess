@@ -89,20 +89,28 @@ def initPopulation():
 def eval_fitness(children):
      #what to value: #wins
      #plays against evryone / 1/5 pop
-     for child in enumerate(children):
-         fitness[child].append(0)
+    for child in enumerate(children):
+        fitness[child].append(0)
          
-     children_copy = copy.deepcopy(children)
-     for child_1 in enumerate(children):
-         children_copy.remove(child_1)
-         for child_2 in enumerate(children_copy):
-             ##what is winner return val -1 child_2 black wins 1 child_1 white wins how corespond to value arrays
-             ##also how to pass in value arrays for the players
-             who_won = GA_simulate(child_1, child_2)
-             if who_won == 1:
-                 fitness[child_1] += 1
-             else:
-                 fitness[child_2] += 1
+    groups = []
+    i = 0
+    while i != 5:
+        groups[i] = [children[i], children[i + 5], children[i + 10], children[i + 15]]
+        i += 1
+        
+    matches = []
+    
+         
+    for group in enumerate(groups):
+    
+        group_copy = copy.deepcopy(group)
+        for child_i_1 in enumerate(group):
+            group_copy.remove(child_i_1)
+            for child_i_2 in enumerate(group_copy):
+                matches.append([children[child_i_1], children[child_i_2]])
+                
+        GA_simulate(matches)
+                 
 
 
 def geneticAlg(population):
@@ -139,27 +147,12 @@ def geneticAlg(population):
     #Assign fitness to new gen
     generation_count += 1
     fitness.clear()
+    eval_fitness(next_gen)
+    
+    
     best_found_index = 0 
     best_fit = 0
-    j = 0
-    while j < len(next_gen):
-        eval_fitness(next_gen[j], next_gen[j + 1])
-        
-        if j == 0:
-            best_found_index = j
-            best_fit = fitness[next_gen[j]]
-            if best_fit < fitness[next_gen[j + 1]]:
-                best_found_index = j + 1
-                best_fit = fitness[next_gen[j + 1]]
-        else:
-            if fitness[next_gen[j]] > best_fit:
-                best_found_index = j
-                best_fit = fitness[next_gen[j]]
-            if fitness[next_gen[j + 1]] > best_fit:
-                best_found_index = j + 1
-                best_fit = fitness[next_gen[j + 1]] 
-                
-        j += 2
+   
     
     #if can play    
     #Check stopping criteria
@@ -209,26 +202,31 @@ def selection(population):
     
 def single_point_M(child):
     mutation = random.randint(0,value_scale)
+    print("Mutation:" + mutation)
     m_location = random.randint(0, num_values - 1)
-    
+    print("Location: " + m_location) 
     child[m_location] = mutation
+    print("Mutated: " + child)
     
     
 def swap_M(child):
     loc_1 = random.randint(0, num_values - 1)
     loc_2 = random.randint(0, num_values - 1)
+    print("Location1: " + loc_1 + "Location2: " + loc_2)
     
     save = child[loc_1]
     
     child[loc_1] = child[loc_2]
     child[loc_2] = save
     
+    print("Mutated: " + child)
+    
        
 def reverse_M(child):
     reverse = child[::-1]
     for i in child:
         child[i] = reverse[i]
-    print(child)
+    print("Mutated: " + child)
     
 def scramble_M(child):
     copy_child = copy.deepcopy(child)
