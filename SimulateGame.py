@@ -19,14 +19,15 @@ def main(mutation_type, selection_type, reproduction_type, mutation_rate, is_tes
     elif winner == -1:
         print("Black Won!")
         
-def GA_simulate(white_heuristic_coefficients, black_heuristic_coefficients):
+def GA_simulate(matches):
     max_search_time = 1 # Rough upperbound on iterative search (will not interupt search)
     
-    game = GameBroker( white_heuristic_coefficients, black_heuristic_coefficients, max_search_time , initial_board = BoardPresets.silverman4x5())
-
-    winner = game.simulate_game(verbose=False)
-
-    return winner
+    brokers = []
+    for match in enumerate(matches):
+        game = GameBroker( match[0], match[1], max_search_time , initial_board = BoardPresets.silverman4x5())
+        brokers.append(game)
+        
+    
 
 if __name__ == "__main__":
     main()
