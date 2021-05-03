@@ -1,6 +1,7 @@
 from GameBroker import GameBroker
 import BoardPresets
 import multiprocessing as mp
+import os
 
 def GA_simulate(matches):
     max_search_time = 1 # Rough upperbound on iterative search (will not interupt search)
