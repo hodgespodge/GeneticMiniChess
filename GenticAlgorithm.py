@@ -94,8 +94,7 @@ def eval_fitness(children):
     groups = []
     i = 0
     while i != 5:
-        arr = [children[i], children[i + 5], children[i + 10], children[i + 15]]
-        groups.append(arr)
+        groups.append([i, i + 5, i + 10, i + 15])
         i += 1
         
     matches = []
@@ -105,7 +104,7 @@ def eval_fitness(children):
         group_copy = copy.deepcopy(group)
         for ix, child_i_1 in enumerate(group):
             group_copy[ix] = None
-            for child_i_2 in enumerate(group_copy):
+            for iy, child_i_2 in enumerate(group_copy):
                 if child_i_2 is not None:
                     arr = [children[child_i_1], children[child_i_2]]
                     matches.append(arr)
