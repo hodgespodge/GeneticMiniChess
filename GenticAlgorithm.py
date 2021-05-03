@@ -16,7 +16,7 @@ s_type = ""
 r_type = ""
 m_rate = 0
 
-stopping_fitness = 5 #beats all selected to play against
+stopping_fitness = 5 # beats all selected to play against
 generation_count = 0
 population_size  = 20
 value_scale      = 100
@@ -24,12 +24,10 @@ num_values       = 6
 output_file      = 0
 
 testing = ""
-#Notes: save to text file population
-#Set initial from text file
 
 
-#Should we have a time limit? if at time return best have
-def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selection_type = 'roulette', reproduction_type = 'single_point', mutation_rate= 5, is_testing= 'T'):
+def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selection_type = 'roulette', reproduction_type = 'single_point', mutation_rate = 0.5, is_testing= 'T'):
+    global output_file
 
     if is_testing == "T":
         now = datetime.now()
@@ -46,7 +44,7 @@ def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selectio
     initialPopulation = []
     
     if not initial_input_file:
-        file = open(initial_input_file,"r")
+        file = open(initial_input_file, "r")
         line = file.readLine(12)
         arr = line.split()
         initialPopulation.append(arr)      
@@ -64,59 +62,71 @@ def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selectio
 
 
 def initPopulation():
-    #population size: 20
-    #scale of values: 0-100
+    # population size: 20
+    # scale of values: 0-100
     values = []
     i = 0
     while i != population_size:
-        values[i] = []
+        values.append([])
         j = 0
         while j != num_values:
-            val = random.randint(0,value_scale)
-            values[i].append(str(val))
+            val = random.randint(0, value_scale)
+            values[i].append(val)
             j += 1
         i += 1 
         
-    k = 0
-    while k < num_values:
-        eval_fitness(values[k], values[k+1])
-        k += 2
+    eval_fitness(values)
+    print("len values :", len(values))
+    print("fitness: ", fitness.values())
         
     return values           
  
     
         
-    
+# children is arrary of array, fitness takes str rep of array
 def eval_fitness(children):
-     #what to value: #wins
-     #plays against evryone / 1/5 pop
+     # what to value: #wins
+     # plays against evryone / 1/5 pop
     for child in enumerate(children):
-        fitness[child].append(0)
+        str_child = ''.join([str(elem) for elem in child])
+        fitness[str_child] = 0
          
     groups = []
     i = 0
     while i != 5:
-        groups[i] = [children[i], children[i + 5], children[i + 10], children[i + 15]]
+        arr = [children[i], children[i + 5], children[i + 10], children[i + 15]]
+        groups.append(arr)
         i += 1
         
     matches = []
-    
-         
-    for group in enumerate(groups):
+
+    for i, group in enumerate(groups):
     
         group_copy = copy.deepcopy(group)
-        for child_i_1 in enumerate(group):
-            group_copy.remove(child_i_1)
+        for ix, child_i_1 in enumerate(group):
+            group_copy[ix] = None
             for child_i_2 in enumerate(group_copy):
-                matches.append([children[child_i_1], children[child_i_2]])
+                if child_i_2 is not None:
+                    arr = [children[child_i_1], children[child_i_2]]
+                    matches.append(arr)
                 
-        GA_simulate(matches)
+        scores = GA_simulate(matches)
+        i = 0
+        stop = len(matches)
+        while i != stop:
+            if scores[i] == 1:
+                str_won = ''.join([str(elem) for elem in matches[i][0]])
+                fitness[str_won] += 1
+            else:
+                str_won = ''.join([str(elem) for elem in matches[i][1]])
+                fitness[str_won] += 1
+            i += 1
                  
 
 
 def geneticAlg(population):
 
-    # global generation_count
+    global generation_count
     
     if testing == "T":
         print("Initial Generation: 0 Population \n")
@@ -127,17 +137,17 @@ def geneticAlg(population):
         
     next_gen = []
     
-    #Selection
+    # Selection
     selected = selection(population)
 
-    #Reproduce
+    # Reproduce
     i = 0
     while i < len(selected):
         child_1, child_2 = reproduction(selected[i], selected[i+1])
-        #Mutate
+        # Mutate
         chance_1 = random.random()
         chance_2 = random.random()
-        #What percent chance?
+        # What percent chance?
         if chance_1 < m_rate:
             mutation(child_1)
         if chance_2 < m_rate:
@@ -147,19 +157,20 @@ def geneticAlg(population):
         next_gen.append(child_2)
         i += 2
         
-    #Assign fitness to new gen
+    # Assign fitness to new gen
     generation_count += 1
     fitness.clear()
     eval_fitness(next_gen)
-    
-    
+
     best_found_index = 0 
     best_fit = 0
-   
-    
-    #if can play    
-    #Check stopping criteria
-    #should say continue even if lower if have more time?
+
+    for ix, individual in enumerate(next_gen):
+        str_individual = ''.join([str(elem) for elem in individual])
+        if fitness[str_individual] > best_fit:
+            best_found_index = ix
+            best_fit = fitness[str_individual]
+
     if testing == "T":
         print("Generation : %s Fittest : %s Population: " % (generation_count, best_fit))
         print(next_gen)
@@ -171,7 +182,6 @@ def geneticAlg(population):
     if stopping_fitness > best_fit:
         geneticAlg(next_gen)
     else:
-        print()
         return next_gen[best_found_index]
 
 
@@ -189,60 +199,66 @@ def mutation(child):
     
 def reproduction(parent_1, parent_2):
     if r_type == 'single_point':
-        single_point_C(parent_1, parent_2)   
-    else:
-        uniform_C(parent_1, parent_2)
+        return single_point_C(parent_1, parent_2)
+
+    return uniform_C(parent_1, parent_2)
     
     
 def selection(population):
     if s_type == 'roulette':
-        roulette_S(population)   
-    else:
-        tournament_S(population)    
-    
- 
-#General Mutation Methods    
+        return roulette_S(population)
+
+    return tournament_S(population)
+
+# General Mutation Methods
     
 def single_point_M(child):
     mutation = random.randint(0,value_scale)
-    print("Mutation:" + mutation)
+    print("Mutation:" + str(mutation))
     m_location = random.randint(0, num_values - 1)
-    print("Location: " + m_location) 
+    print("Location: " + str(m_location) )
     child[m_location] = mutation
-    print("Mutated: " + child)
+    print("Mutated: ")
+    print(child, sep=" ")
     
     
 def swap_M(child):
     loc_1 = random.randint(0, num_values - 1)
     loc_2 = random.randint(0, num_values - 1)
-    print("Location1: " + loc_1 + "Location2: " + loc_2)
+    print("Location1: " + str(loc_1) + "Location2: " + str(loc_2))
     
     save = child[loc_1]
     
     child[loc_1] = child[loc_2]
     child[loc_2] = save
-    
-    print("Mutated: " + child)
+
+    print("Mutated: ")
+    print(child, sep=" ")
     
        
 def reverse_M(child):
     reverse = child[::-1]
-    for i in child:
+    i = 0
+    while i != num_values:
         child[i] = reverse[i]
-    print("Mutated: " + child)
+        i += 1
+
+    print("Mutated: ")
+    print(child, sep=" ")
     
 def scramble_M(child):
     copy_child = copy.deepcopy(child)
     i = 0
-    
+
     while len(copy_child) != 0:
         value = random.choice(copy_child)
         copy_child.remove(value)
         child[i] = value
         i += 1
-        
-    
-#General Crossover Methods    
+
+    print("Mutated: ")
+    print(child, sep=" ")
+# General Crossover Methods
     
 def single_point_C(parent_1, parent_2):
     child_1 = []
@@ -255,8 +271,8 @@ def single_point_C(parent_1, parent_2):
         i += 1
     i = loc_1
     while i != num_values:
-       child_1.append(parent_2[i]) 
-       child_2.append(parent_1[i]) 
+       child_1.append(parent_2[i])
+       child_2.append(parent_1[i])
        i += 1
        
     return child_1, child_2    
@@ -273,27 +289,25 @@ def uniform_C(parent_1, parent_2):
             child_1.append(parent_1[i])
             child_2.append(parent_2[i])
         else:
-            child_1.append(parent_2[i]) 
-            child_2.append(parent_1[i]) 
+            child_1.append(parent_2[i])
+            child_2.append(parent_1[i])
         i += 1
         
     return child_1, child_2
-    
 
-    
-   
-    
-#General Selection Methods 
+# General Selection Methods
     
 def roulette_S(population):
     sum_fitness = 0
     for individual in enumerate(population):
-        sum_fitness += fitness[individual]
+        str_individual = ''.join([str(elem) for elem in individual])
+        sum_fitness += fitness[str_individual]
      
     probability = []
     sum_of_prob = 0
     for individual in enumerate(population):
-        p = sum_of_prob + ((fitness[individual]*1.0)/sum_fitness)
+        str_individual = ''.join([str(elem) for elem in individual])
+        p = sum_of_prob + ((fitness[str_individual]*1.0)/sum_fitness)
         probability.append(p)
         sum_of_prob += p
         
@@ -307,10 +321,9 @@ def roulette_S(population):
                 break
             
     return selected
-        
-    
+
 def tournament_S(population):
-    #tournament size? paper says less then 10 
+    # tournament size? paper says less then 10
     t_size = 3
     size_pop = len(population)
     selected = []
@@ -323,14 +336,15 @@ def tournament_S(population):
         best_fit = 0
         best_index = 0
         while k != t_size:
-            index = random.randint(0,size_pop - 1)
+            index = random.randint(0, size_pop - 1)
             tournament.append(population[index])
-            if fitness[population[index]] > best_fit:
-                best_fit = fitness[population[index]]
+            str_individual = ''.join([str(elem) for elem in population[index]])
+            if fitness[str_individual] > best_fit:
+                best_fit = fitness[str_individual]
                 best_index = index
             
         selected.append(population[best_index])
         i += 1
     
     return selected
-    
+
