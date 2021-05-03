@@ -7,7 +7,7 @@ def GA_simulate(matches):
     
     brokers = []
     for match in enumerate(matches):
-        game = GameBroker( match[0], match[1], max_search_time , initial_board = BoardPresets.silverman4x5())
+        game = GameBroker(match[0], match[1], max_search_time , initial_board = BoardPresets.silverman4x5())
         brokers.append(game)
 
     initial_board = BoardPresets.silverman4x5()
@@ -35,6 +35,8 @@ def GA_simulate(matches):
             print("White Won!")
         elif value == -1:
             print("Black Won!")
+
+    return results
 
 def sim_game(gameBroker):
 
