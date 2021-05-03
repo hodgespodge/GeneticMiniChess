@@ -100,14 +100,15 @@ def eval_fitness(children):
         
     matches = []
 
-    for group in enumerate(groups):
+    for i, group in enumerate(groups):
     
         group_copy = copy.deepcopy(group)
         for ix, child_i_1 in enumerate(group):
             group_copy[ix] = None
             for child_i_2 in enumerate(group_copy):
                 if child_i_2 is not None:
-                    matches.append([children[child_i_1], children[child_i_2]])
+                    arr = [children[child_i_1], children[child_i_2]]
+                    matches.append(arr)
                 
         scores = GA_simulate(matches)
         i = 0
