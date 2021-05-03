@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat May  1 14:03:04 2021
+
+@author: Isabella Samuelsson
+"""
+
+from GeneticAlgorithm import single_point_M, swap_M, reverse_M, scramble_M, initPopulation, tournament_S, roulette_S
+
+def main():
+    init_test()
+
+
+def init_test():
+    values = initPopulation()
+    print(values, sep=" ")
+
+def selection_test():
+    values = initPopulation()
+    selected = tournament_S(values)
+    print("Len: " + str(len(selected)))
+    print(selected, sep=" ")
+
+    selected2 = roulette_S(values)
+    print("Len: " + str(len(selected2)))
+    print(selected2, sep=" ")
+
+
+def mutation_test():
+    test_arr = [1,2,3,4,5,6]
+    # Mutation Tests
+    print("Single Point M")
+    print("Before ")
+    print(test_arr, sep=" ")
+    print("here")
+    single_point_M(test_arr)
+    print("/n")
+
+    print("Swap M")
+    print(test_arr, sep=" ")
+    swap_M(test_arr)
+    print("/n")
+
+    print("Reverse M")
+    print(test_arr, sep=" ")
+    reverse_M(test_arr)
+    print("/n")
+
+    print("Scramble M")
+    print(test_arr, sep=" ")
+    scramble_M(test_arr)
+    print("/n")
+
+def reproduction_test():
+    print("")
+
+
+if __name__ == "__main__":
+    main()
