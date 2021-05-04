@@ -16,7 +16,7 @@ s_type = ""
 r_type = ""
 m_rate = 0
 
-stopping_fitness = 5 # beats all selected to play against
+stopping_fitness = 3 # beats all selected to play against
 generation_count = 0
 population_size  = 20
 value_scale      = 100
@@ -73,8 +73,8 @@ def initPopulation():
             val = random.randint(0, value_scale)
             values[i].append(val)
             j += 1
-        i += 1 
-        
+        i += 1
+    print("len values :", len(values))
     eval_fitness(values)
     print("len values :", len(values))
     print("fitness: ", fitness.values())
@@ -87,39 +87,36 @@ def initPopulation():
 def eval_fitness(children):
      # what to value: #wins
      # plays against evryone / 1/5 pop
-    for child in enumerate(children):
-        str_child = ''.join([str(elem) for elem in child])
-        fitness[str_child] = 0
+    for _, child in enumerate(children):
+        fitness[tuple(child)] = 0
          
     groups = []
     i = 0
-    while i != 5:
-        groups.append([i, i + 5, i + 10, i + 15])
+    while i != 4:
+        groups.append([i, i + 4, i + 8, i + 12, i + 16])
         i += 1
         
     matches = []
 
-    for i, group in enumerate(groups):
+    for _, group in enumerate(groups):
     
         group_copy = copy.deepcopy(group)
         for ix, child_i_1 in enumerate(group):
             group_copy[ix] = None
-            for iy, child_i_2 in enumerate(group_copy):
+            for _, child_i_2 in enumerate(group_copy):
                 if child_i_2 is not None:
                     arr = [children[child_i_1], children[child_i_2]]
                     matches.append(arr)
                 
-        scores = GA_simulate(matches)
-        i = 0
-        stop = len(matches)
-        while i != stop:
-            if scores[i] == 1:
-                str_won = ''.join([str(elem) for elem in matches[i][0]])
-                fitness[str_won] += 1
-            else:
-                str_won = ''.join([str(elem) for elem in matches[i][1]])
-                fitness[str_won] += 1
-            i += 1
+    scores = GA_simulate(matches)
+    i = 0
+    stop = len(matches)
+    while i != stop:
+        if scores[i] == 1:
+            fitness[tuple(matches[i][0])] += 1
+        else:
+            fitness[tuple(matches[i][1])] += 1
+        i += 1
                  
 
 
@@ -165,10 +162,10 @@ def geneticAlg(population):
     best_fit = 0
 
     for ix, individual in enumerate(next_gen):
-        str_individual = ''.join([str(elem) for elem in individual])
-        if fitness[str_individual] > best_fit:
+    #    str_individual = ''.join([str(elem) for elem in individual])
+        if fitness[tuple(individual)] > best_fit:
             best_found_index = ix
-            best_fit = fitness[str_individual]
+            best_fit = fitness[tuple(individual)]
 
     if testing == "T":
         print("Generation : %s Fittest : %s Population: " % (generation_count, best_fit))
@@ -298,15 +295,15 @@ def uniform_C(parent_1, parent_2):
     
 def roulette_S(population):
     sum_fitness = 0
-    for individual in enumerate(population):
-        str_individual = ''.join([str(elem) for elem in individual])
-        sum_fitness += fitness[str_individual]
+    for _, individual in enumerate(population):
+        #str_individual = ''.join([str(elem) for elem in individual])
+        sum_fitness += fitness[tuple(individual)]
      
     probability = []
     sum_of_prob = 0
-    for individual in enumerate(population):
-        str_individual = ''.join([str(elem) for elem in individual])
-        p = sum_of_prob + ((fitness[str_individual]*1.0)/sum_fitness)
+    for _, individual in enumerate(population):
+        #str_individual = ''.join([str(elem) for elem in individual])
+        p = sum_of_prob + ((fitness[tuple(individual)]*1.0)/sum_fitness)
         probability.append(p)
         sum_of_prob += p
         
@@ -314,7 +311,7 @@ def roulette_S(population):
     selected = []
     while len(selected) != size_pop:
         num = random.random()
-        for (i, individual) in enumerate(population):
+        for i, individual in enumerate(population):
             if num <= probability[i]:
                 selected.append(individual)
                 break
@@ -337,9 +334,9 @@ def tournament_S(population):
         while k != t_size:
             index = random.randint(0, size_pop - 1)
             tournament.append(population[index])
-            str_individual = ''.join([str(elem) for elem in population[index]])
-            if fitness[str_individual] > best_fit:
-                best_fit = fitness[str_individual]
+         #   str_individual = ''.join([str(elem) for elem in population[index]])
+            if fitness[tuple(population[index])] > best_fit:
+                best_fit = fitness[tuple(population[index])]
                 best_index = index
             
         selected.append(population[best_index])
