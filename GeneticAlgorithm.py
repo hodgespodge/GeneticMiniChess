@@ -10,7 +10,7 @@ import copy
 import datetime
 from GA_simulate import GA_simulate
 
-#seed the random number generator for testing
+# seed the random number generator for testing
 random.seed(10)
 
 fitness = {}
@@ -19,7 +19,7 @@ s_type = ""
 r_type = ""
 m_rate = 0
 
-stopping_fitness = 3 # beats all selected to play against
+stopping_fitness = 4 # beats all selected to play against
 generation_count = 0
 population_size  = 20
 value_scale      = 100
@@ -28,25 +28,26 @@ output_file      = 0
 
 testing = ""
 
+def main():
+    geneticAlgorithm()
 
-def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selection_type = 'roulette', reproduction_type = 'single_point', mutation_rate = 0.5, is_testing= 'T'):
+def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selection_type = 'roulette', reproduction_type = 'single_point', mutation_rate = 0.3, is_testing= 'T'):
     global output_file
 
     if is_testing == "T":
-        now = datetime.now()
-        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-        output_file = open("output_" + dt_string, "w")
+        now = "output_" + str(datetime.datetime)
+        output_file = open(now, "w")
     
-    m_type.append(mutation_type)
-    s_type.append(selection_type)
-    r_type.append(reproduction_type)
-    m_rate.append(mutation_rate)
+    m_type.join(mutation_type)
+    s_type.join(selection_type)
+    r_type.join(reproduction_type)
+    m_rate = mutation_rate
     
-    testing.append(is_testing)
+    testing.join(is_testing)
     
     initialPopulation = []
     
-    if not initial_input_file:
+    if initial_input_file:
         file = open(initial_input_file, "r")
         line = file.readLine(12)
         arr = line.split()
@@ -95,8 +96,9 @@ def eval_fitness(children):
          
     groups = []
     i = 0
-    while i != 4:
-        groups.append([i, i + 4, i + 8, i + 12, i + 16])
+    while i != 5:
+        groups.append([i, i + 5, i + 10, i + 15])
+        # groups.append([i, i + 4, i + 8, i + 12, i + 16])
         i += 1
         
     matches = []
@@ -346,4 +348,7 @@ def tournament_S(population):
         i += 1
     
     return selected
+
+if __name__ == "__main__":
+    main()
 
