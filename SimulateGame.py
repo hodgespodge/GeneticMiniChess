@@ -10,9 +10,6 @@ def main():
 
     white_heuristic_coefficients = geneticAlgorithm(initial_input_file=None)
     ##This is our base comparision player?
-
-    # black_heuristic_coefficients = geneticAlgorithm(mutation_type, selection_type, reproduction_type, mutation_rate, is_testing)
-    
     
     max_search_time = 1 # Rough upperbound on iterative search (will not interupt search)
     

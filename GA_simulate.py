@@ -7,7 +7,7 @@ def GA_simulate(matches):
     max_search_time = 1 # Rough upperbound on iterative search (will not interupt search)
     
     brokers = []
-    for match in enumerate(matches):
+    for _,match in enumerate(matches):
         game = GameBroker(match[0], match[1], max_search_time , initial_board = BoardPresets.silverman4x5())
         brokers.append(game)
 
@@ -18,6 +18,14 @@ def GA_simulate(matches):
         print(broker.white_heuristic_coefficients,"vs",broker.black_heuristic_coefficients)
 
     print("cpus available:",mp.cpu_count())
+
+
+    # Create table head for makeshift progress bar
+    print()
+    for __ in brokers:
+        print("-",end="")
+    print()
+        
 
     with mp.Pool(mp.cpu_count()-1) as pool:
         
@@ -41,7 +49,7 @@ def GA_simulate(matches):
 
 def sim_game(gameBroker):
 
-    print("starting process",os.getpid())
+    # print("starting process",os.getpid())
 
     return gameBroker.simulate_game(verbose=False)
 

@@ -10,6 +10,9 @@ import copy
 import datetime
 from GA_simulate import GA_simulate
 
+#seed the random number generator for testing
+random.seed(10)
+
 fitness = {}
 m_type = ""
 s_type = ""

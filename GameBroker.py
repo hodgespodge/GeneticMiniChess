@@ -15,12 +15,15 @@ class GameBroker():
         
     def simulate_game(self,verbose = False):
 
+
         board = self.initial_board
 
         if verbose:
             print_board(board)
 
         while(True):
+
+            # print("|",flush=True,end="")
 
             white_move = self.white_player.get_move(board,first_player = True,verbose=verbose)
             if verbose:
@@ -34,6 +37,13 @@ class GameBroker():
 
             check_mate, winner = game_over(board=board)
             if check_mate:
+
+                # Print out for makeshift progress bar
+                if winner == 1:
+                    print("W",end="",flush=True)
+                elif winner == -1:
+                    print("B",end="",flush=True)
+
                 return winner
 
             black_move = self.black_player.get_move(board, first_player= False, verbose=verbose)
@@ -48,6 +58,13 @@ class GameBroker():
 
             check_mate, winner = game_over(board=board)
             if check_mate:
+
+                # Print out for makeshift progress bar
+                if winner == 1:
+                    print("W",end="",flush=True)
+                elif winner == -1:
+                    print("B",end="",flush=True)
+
                 return winner
 
    
