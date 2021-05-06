@@ -16,13 +16,13 @@ random.seed(10)
 # Fitness Map which holds solution as a Key and int fitness as Value
 fitness = {}
 # Mutation Operator Type
-m_type = ""
+m_type = None
 # Selection Operator type
-s_type = ""
+s_type = None
 # Reproduction Operator Type
-r_type = ""
+r_type = None
 # Mutation Rate
-m_rate = 0
+m_rate = None
 
 # Stopping Criteria for GA means a solution beat each of the players it played against
 stopping_fitness = 3
@@ -51,19 +51,19 @@ piece values array. This method can take a specified mutation,
  and an input file which specifies a set of an initial population 
  size list of solutions to seed the GA with.
 '''
-def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selection_type = 'roulette', reproduction_type = 'single_point', mutation_rate = 0.3, is_testing= 'T'):
-    global output_file, m_rate
+def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selection_type = 'roulette', reproduction_type = 'single_point', mutation_rate = 0.3, is_testing= 'F'):
+    global output_file, m_rate, m_type, r_type, testing, s_type
 
     if is_testing == "T":
         now = "output_" + str(datetime.datetime.now())
         output_file = open(now, "w")
     
-    m_type.join(mutation_type)
-    s_type.join(selection_type)
-    r_type.join(reproduction_type)
+    m_type = mutation_type
+    s_type = selection_type
+    r_type = reproduction_type
     m_rate = mutation_rate
     
-    testing.join(is_testing)
+    testing = is_testing
     
     initialPopulation = []
     
@@ -169,10 +169,17 @@ def geneticAlg(population):
     
     if testing == "T":
         print("Initial Generation: 0 Population \n")
-        print(population + "\n")
+        print(population)
+        print('\n')
         
-        output_file.write("Initial Generation: 0 Population \n");
-        output_file.write(population + "\n");
+        output_file.write("Initial Generation: 0 Population \n")
+        i = 0
+        while i != population_size:
+            output_file.write(str(population[i]))
+            print(len(population))
+            print(i)
+            i += 1
+        print('\n')
         
     next_gen = []
     
@@ -258,7 +265,6 @@ crossover array.
 def selection(population):
     if s_type == 'roulette':
         return roulette_S(population)
-
     return tournament_S(population)
 
 # General Mutation Methods
@@ -360,19 +366,17 @@ def uniform_C(parent_1, parent_2):
 '''
 First Selection function option. Roulette Selection assigns a probability 
 to each solutions which is based on the fitness and the 
-overall fitnesses of the solutions. Because of this there is 
+overall fitness's of the solutions. Because of this there is 
 a higher probability that fit solutions will be selected. 
 '''
 def roulette_S(population):
     sum_fitness = 0
     for _, individual in enumerate(population):
-        #str_individual = ''.join([str(elem) for elem in individual])
         sum_fitness += fitness[tuple(individual)]
      
     probability = []
     sum_of_prob = 0
     for _, individual in enumerate(population):
-        #str_individual = ''.join([str(elem) for elem in individual])
         p = sum_of_prob + ((fitness[tuple(individual)]*1.0)/sum_fitness)
         probability.append(p)
         sum_of_prob += p
@@ -408,9 +412,9 @@ def tournament_S(population):
         best_index = 0
         while k != t_size:
             index = random.randint(0, size_pop - 1)
-
-            if fitness[tuple(population[index])] > best_fit:
-                best_fit = fitness[tuple(population[index])]
+            arr = population[index]
+            if fitness[tuple(arr)] > best_fit:
+                best_fit = fitness[tuple(arr)]
                 best_index = index
             k += 1
         selected.append(population[best_index])
