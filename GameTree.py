@@ -47,7 +47,7 @@ class GameTree():
 
         if best_move in self.two_fold_moves: # must check if default move would cause draw
             entry = self.transposition_table[children[0][0]] 
-            self.transposition_table[children[0][0]] = (entry[0], -0.5 ,entry[2],entry[3])
+            self.transposition_table[children[0][0]] = (entry[0], 0 ,entry[2],entry[3])
 
         best_value = self.transposition_table[children[0][0]][1] # use hash of first child to get its minmax score
 
@@ -55,7 +55,7 @@ class GameTree():
 
             if child[1] in self.two_fold_moves: #If move would cause three fold draw
                 entry = self.transposition_table[child[0]]
-                self.transposition_table[child[0]] = (entry[0], -0.5 ,entry[2],entry[3])
+                self.transposition_table[child[0]] = (entry[0], 0 ,entry[2],entry[3])
 
             if self.transposition_table[child[0]][1] > best_value:
                 best_value = self.transposition_table[child[0]][1]
@@ -72,7 +72,7 @@ class GameTree():
         else:
             draw = False
 
-        return best_move
+        return best_move ,draw
 
     def root_negamax(self,board_hash,depth,alpha,beta,first_player,verbose=0):
 
@@ -137,7 +137,6 @@ class GameTree():
 
         return [(child[1],child[2]) for child in childNodes] # return list of (hash, move)
 
-    # https://en.wikipedia.org/wiki/Negamax#Negamax_with_alpha_beta_pruning_and_transposition_tables
     def negamax(self,board_hash,depth,alpha,beta,first_player,verbose=0):
 
         alphaOrig = alpha

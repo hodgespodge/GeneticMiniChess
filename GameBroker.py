@@ -40,7 +40,7 @@ class GameBroker():
 
         while(True):
 
-            white_move= self.white_player.get_move(board,first_player = True,verbose=verbose)
+            white_move, draw = self.white_player.get_move(board,first_player = True,verbose=verbose)
             if verbose > 0:
                 print("White: ",get_english_notation(white_move))
 
@@ -57,10 +57,11 @@ class GameBroker():
 
                 return winner
 
-            if time.time() - start_time > max_game_time:
+
+            if (time.time() - start_time > max_game_time) or draw:
                 return 0
 
-            black_move = self.black_player.get_move(board, first_player= False, verbose=verbose)
+            black_move, draw = self.black_player.get_move(board, first_player= False, verbose=verbose)
 
             if verbose > 0:
                 print("Black: ",get_english_notation(black_move))
@@ -78,7 +79,7 @@ class GameBroker():
 
                 return winner
 
-            if time.time() - start_time > max_game_time:
+            if (time.time() - start_time > max_game_time) or draw:
                 return 0
 
 class InteractiveBroker():
@@ -105,7 +106,7 @@ class InteractiveBroker():
             return True
 
     def ai_turn(self,board,verbose):
-        move = self.AI_player.get_move(board,first_player = not self.first_player,verbose=verbose)
+        move, draw = self.AI_player.get_move(board,first_player = not self.first_player,verbose=verbose)
 
         if verbose > 0:
             if self.first_player:
@@ -160,7 +161,6 @@ class InteractiveBroker():
 
         return board
         
-
     def play_game(self,verbose = 2):
 
         if verbose == False:
@@ -185,5 +185,3 @@ class InteractiveBroker():
             board = self.human_turn(board, verbose)
             if self.check_if_end(board,verbose,player= not self.first_player):
                 break
-            # if verbose > 1:
-            #     print_board(board)
