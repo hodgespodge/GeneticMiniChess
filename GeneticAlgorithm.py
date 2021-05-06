@@ -13,24 +13,44 @@ from GA_simulate import GA_simulate
 # seed the random number generator for testing
 random.seed(10)
 
+# Fitness Map which holds solution as a Key and int fitness as Value
 fitness = {}
+# Mutation Operator Type
 m_type = ""
+# Selection Operator type
 s_type = ""
+# Reproduction Operator Type
 r_type = ""
+# Mutation Rate
 m_rate = 0
 
-stopping_fitness = 4 # beats all selected to play against
+# Stopping Criteria for GA means a solution beat each of the players it played against
+stopping_fitness = 3
+# Number of generations
 generation_count = 0
+# Population Size
 population_size  = 20
+# Max value of a variable
 value_scale      = 100
+# Number of heuristic values
 num_values       = 6
+# Output File
 output_file      = 0
-
+# If Testing
 testing = ""
 
+# Main for if just running GA
 def main():
     geneticAlgorithm()
-
+'''
+This is the method that is called from TODO. It starts 
+the Genetic Algorithm and returns the best found heuristic 
+piece values array. This method can take a specified mutation,
+ reproduction and selection operator along with a mutation 
+ rate, an is testing boolean variable ('T' for true anything else for false)
+ and an input file which specifies a set of an initial population 
+ size list of solutions to seed the GA with.
+'''
 def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selection_type = 'roulette', reproduction_type = 'single_point', mutation_rate = 0.3, is_testing= 'T'):
     global output_file, m_rate
 
@@ -49,9 +69,12 @@ def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selectio
     
     if initial_input_file:
         file = open(initial_input_file, "r")
-        line = file.readLine(12)
-        arr = line.split()
-        initialPopulation.append(arr)      
+        i = 0
+        while i != population_size:
+            line = file.readLine(12)
+            arr = line.split()
+            initialPopulation.append(arr)
+            i += 1
         file.close()
     else:
         pop = initPopulation()
@@ -64,7 +87,10 @@ def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selectio
     return best_found
     
 
-
+'''
+Randomly initializes the population and calls eval_fitness 
+to evaluate the fitness of the generated solutions.
+'''
 def initPopulation():
     # population size: 20
     # scale of values: 0-100
@@ -78,7 +104,6 @@ def initPopulation():
             values[i].append(val)
             j += 1
         i += 1
-    print("len values :", len(values))
     eval_fitness(values)
     print("len values :", len(values))
     print("fitness: ", fitness.values())
@@ -87,10 +112,19 @@ def initPopulation():
  
     
         
-# children is arrary of array, fitness takes str rep of array
+'''
+Evaluates the fitness of the population. Groups the 
+parameter population into 5 groups of 4 solutions. Each 
+solution competes against other member solutions of a group 
+for a total of 3 games per solution. The fitness of a solution 
+is the number of games won. This function creates an array 
+of matches pairs which is used as a parameter in the call to 
+GA_Simulate(). GA_Simulate will use MultiProcessing to run 
+all the matches in the matches array. The fitness dictionary 
+takes the solution array as a key and the fitness (# of wins) 
+as the value.
+'''
 def eval_fitness(children):
-     # what to value: #wins
-     # plays against evryone / 1/5 pop
     for _, child in enumerate(children):
         fitness[tuple(child)] = 0
          
@@ -124,7 +158,11 @@ def eval_fitness(children):
         i += 1
                  
 
-
+'''
+Called by GeneticAlgorithm() to continue creating and 
+evaluating new generations of solutions until the stopping 
+criteria is met.
+'''
 def geneticAlg(population):
 
     global generation_count
@@ -162,6 +200,8 @@ def geneticAlg(population):
     generation_count += 1
     fitness.clear()
     eval_fitness(next_gen)
+    print("len values :", len(next_gen))
+    print("fitness: ", fitness.values())
 
     best_found_index = 0 
     best_fit = 0
@@ -186,7 +226,10 @@ def geneticAlg(population):
         return next_gen[best_found_index]
 
 
-
+'''
+Calls the specified mutation operator on the 
+parameter child solution.
+'''
 def mutation(child):
     if m_type == 'single_point':
         single_point_M(child)
@@ -196,15 +239,22 @@ def mutation(child):
         reverse_M(child)    
     else:
         scramble_M(child)
-    
-    
+
+'''
+Calls the specified reproduction operator on the 
+two parameter parent solution, returns two offspring solutions.
+'''
 def reproduction(parent_1, parent_2):
     if r_type == 'single_point':
         return single_point_C(parent_1, parent_2)
 
     return uniform_C(parent_1, parent_2)
     
-    
+'''
+Calls the specified selection operator on the 
+population, returns selected individuals for 
+crossover array.
+'''
 def selection(population):
     if s_type == 'roulette':
         return roulette_S(population)
@@ -213,7 +263,8 @@ def selection(population):
 
 # General Mutation Methods
 '''
-Commenting
+Mutation Operator. Single Point Mutation randomly 
+chooses a single index and sets it to a random value.
 '''
 def single_point_M(child):
     mutation = random.randint(0,value_scale)
@@ -222,7 +273,10 @@ def single_point_M(child):
 
     child[m_location] = mutation
     
-    
+'''
+Mutation operator. Swap Mutation selects two random 
+locations and switches the values at the locations.
+'''
 def swap_M(child):
     loc_1 = random.randint(0, num_values - 1)
     loc_2 = random.randint(0, num_values - 1)
@@ -232,14 +286,20 @@ def swap_M(child):
     child[loc_1] = child[loc_2]
     child[loc_2] = save
     
-       
+'''
+Mutation Operator. Reverse Mutation reverses 
+the order of the values in the array.
+'''
 def reverse_M(child):
     reverse = child[::-1]
     i = 0
     while i != num_values:
         child[i] = reverse[i]
         i += 1
-    
+'''
+Mutation Operator. Scramble Mutation randomly 
+arranges the values in the array.
+'''
 def scramble_M(child):
     copy_child = copy.deepcopy(child)
     i = 0
