@@ -35,7 +35,7 @@ def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selectio
     global output_file
 
     if is_testing == "T":
-        now = "output_" + str(datetime.datetime)
+        now = "output_" + str(datetime.datetime.now())
         output_file = open(now, "w")
     
     m_type.join(mutation_type)
@@ -119,7 +119,7 @@ def eval_fitness(children):
     while i != stop:
         if scores[i] == 1:
             fitness[tuple(matches[i][0])] += 1
-        else:
+        elif scores[i] == -1:
             fitness[tuple(matches[i][1])] += 1
         i += 1
                  
@@ -215,26 +215,20 @@ def selection(population):
     
 def single_point_M(child):
     mutation = random.randint(0,value_scale)
-    print("Mutation:" + str(mutation))
+
     m_location = random.randint(0, num_values - 1)
-    print("Location: " + str(m_location) )
+
     child[m_location] = mutation
-    print("Mutated: ")
-    print(child, sep=" ")
     
     
 def swap_M(child):
     loc_1 = random.randint(0, num_values - 1)
     loc_2 = random.randint(0, num_values - 1)
-    print("Location1: " + str(loc_1) + "Location2: " + str(loc_2))
     
     save = child[loc_1]
     
     child[loc_1] = child[loc_2]
     child[loc_2] = save
-
-    print("Mutated: ")
-    print(child, sep=" ")
     
        
 def reverse_M(child):
@@ -243,9 +237,6 @@ def reverse_M(child):
     while i != num_values:
         child[i] = reverse[i]
         i += 1
-
-    print("Mutated: ")
-    print(child, sep=" ")
     
 def scramble_M(child):
     copy_child = copy.deepcopy(child)
@@ -257,8 +248,6 @@ def scramble_M(child):
         child[i] = value
         i += 1
 
-    print("Mutated: ")
-    print(child, sep=" ")
 # General Crossover Methods
     
 def single_point_C(parent_1, parent_2):
