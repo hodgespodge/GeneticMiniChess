@@ -51,6 +51,6 @@ def sim_game(gameBroker):
 
     # print("starting process",os.getpid())
 
-    return gameBroker.simulate_game(verbose=False)
+    return gameBroker.simulate_game(verbose=-1)
 
     
