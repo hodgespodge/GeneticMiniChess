@@ -3,6 +3,9 @@ from operator import add, sub
 def print_board(board):
     board_dimensions = board.board_dimensions
     for y in range(board_dimensions[1],-1,-1):
+        
+        print(y + 1,end=" ")
+
         for x in range(board_dimensions[0]+1):
             piece = (board.get((x,y),None))
 
@@ -30,6 +33,12 @@ def print_board(board):
                 # print('\x1b[6;30;42m'+" "+'\x1b[0m',end=" ")
         print()
 
+    print("  ",end="")
+    for x in range(board_dimensions[0]+1):
+        print(alphabet()[x],end=" ")
+    print()
+    print()
+
 def get_english_notation(move):
     starting_coords = move[0]
     ending_coords = move[1]
@@ -46,6 +55,8 @@ def piece_unicode_list(): # pieces are numbered 0-11
 
 def alphabet():
     return ["a","b","c","d","e","f","g","h","i","j"]
+def reverse_alphabet():
+    return {"a":0,"b":1,"c":2,"d":3,"e":4,"f":5,"g":6,"h":7,"i":8,"j":9}
 
 def piece_list(): # pieces are numbered 0-11
     return ["white_king","white_queen","white_rook","white_bishop","white_knight","white_pawn","black_king","black_queen","black_rook","black_bishop","black_knight","black_pawn"]
