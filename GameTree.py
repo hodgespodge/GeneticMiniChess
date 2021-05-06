@@ -34,7 +34,7 @@ class GameTree():
         iterative_depth  = 1
         while (True):
 
-            print(start_time, time.time(), max_search_time )
+            # print(start_time, time.time(), max_search_time )
 
             if time.time() - start_time > max_search_time:
                 break
