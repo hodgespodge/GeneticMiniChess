@@ -79,8 +79,7 @@ class GameBroker():
                 return winner
 
             if time.time() - start_time > max_game_time:
-                print("game ran out of time!!!")
-                return None
+                return 0
 
 class InteractiveBroker():
     
