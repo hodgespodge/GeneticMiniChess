@@ -2,6 +2,7 @@ from GameTree import Player
 
 from Board import Board, get_new_board_after_move, game_over
 from MiscFunctions import get_english_notation, print_board
+import time
 
 # Print out for makeshift progress bar
 def _progress_bar_print(winner):
@@ -25,10 +26,12 @@ class GameBroker():
     
     # Print out for makeshift progress bar
 
-    def simulate_game(self,verbose = 0):
+    def simulate_game(self,verbose = 0, max_game_time = 60):
 
         if verbose == False:
             verbose = 0
+
+        start_time = time.time()
 
         board = self.initial_board
 
@@ -54,6 +57,9 @@ class GameBroker():
 
                 return winner
 
+            if time.time() - start_time > max_game_time:
+                return None
+
             black_move = self.black_player.get_move(board, first_player= False, verbose=verbose)
 
             if verbose > 0:
@@ -70,4 +76,7 @@ class GameBroker():
                 if verbose == -1:
                     _progress_bar_print(winner)
 
-                return winner
+                return None
+
+            if time.time() - start_time > max_game_time:
+                break

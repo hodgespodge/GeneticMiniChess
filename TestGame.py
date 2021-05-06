@@ -11,8 +11,11 @@ def main():
     
     game = GameBroker( white_heuristic_coefficients, black_heuristic_coefficients, max_search_time , initial_board = BoardPresets.silverman4x5())
 
-    winner = game.simulate_game(verbose=-1)
+    winner = game.simulate_game(verbose=-1,max_game_time=60)
 
+    if winner is None:
+        print("Game ran out of time")
+        
     if winner == 1:
         print("White Won!")
     elif winner == -1:
