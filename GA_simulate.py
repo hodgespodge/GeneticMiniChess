@@ -11,8 +11,8 @@ def GA_simulate(matches):
         game = GameBroker(match[0], match[1], max_search_time , initial_board = BoardPresets.silverman4x5())
         brokers.append(game)
 
-    initial_board = BoardPresets.silverman4x5()
-    max_search_time = 1
+    # initial_board = BoardPresets.silverman4x5()
+    max_search_time = 0.5
 
     for broker in brokers:
         print(broker.white_heuristic_coefficients,"vs",broker.black_heuristic_coefficients)

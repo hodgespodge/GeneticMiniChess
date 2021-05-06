@@ -58,8 +58,7 @@ class GameBroker():
                 return winner
 
             if time.time() - start_time > max_game_time:
-                print("game ran out of time!!!")
-                return None
+                return 0
 
             black_move = self.black_player.get_move(board, first_player= False, verbose=verbose)
 
