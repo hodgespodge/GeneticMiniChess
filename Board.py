@@ -1,9 +1,14 @@
 from collections import UserDict
 from copy import deepcopy
-# from operator import add, sub
 from math import pow
 
 from MiscFunctions import tuple_add
+
+'''
+Author Samuel Hodges
+
+'''
+
 
 def get_new_board_after_move(board,move,first_player):
 
@@ -61,6 +66,7 @@ class Board(dict):
         self.white_king_loc_piece = white_king_loc_piece
         self.black_king_loc_piece = black_king_loc_piece
   
+    # Hash functions are necessary for transposition table
     def _hash_(self):
 
         items = sorted(self.items(), key = lambda x : x[0][0] + 12*x[0][1])

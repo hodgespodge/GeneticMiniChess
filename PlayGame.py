@@ -1,6 +1,12 @@
 from GameBroker import InteractiveBroker
 import BoardPresets
 
+'''
+Author Samuel Hodges
+
+'''
+
+
 def main():
 
     # heuristic values are 0-5:  ["king","queen","rook","bishop","knight","pawn"]

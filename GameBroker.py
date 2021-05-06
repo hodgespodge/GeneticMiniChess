@@ -13,6 +13,7 @@ def _progress_bar_print(winner):
     elif winner == 0:
         print("D",end="",flush=True)
 
+# Brokers a game between 2 AIs with heuristic coefficients
 class GameBroker():
 
     def __init__(self, white_heuristic_coefficients = None, black_heuristic_coefficients = None, max_search_time = 3, initial_board = None):
@@ -24,8 +25,8 @@ class GameBroker():
         self.white_player = Player(self.white_heuristic_coefficients, max_search_time)
         self.black_player = Player(self.black_heuristic_coefficients, max_search_time)
     
-    # Print out for makeshift progress bar
-
+    
+    # Simulate a full game and return an int for the winner (-1, 0, or 1)
     def simulate_game(self,verbose = 0, max_game_time = 60):
 
         if verbose == False:
@@ -82,6 +83,7 @@ class GameBroker():
             if (time.time() - start_time > max_game_time) or draw:
                 return 0
 
+# Brokers a game between an agent and a human 
 class InteractiveBroker():
     
     def __init__(self, AI_heuristic_coefficients = None, first_player= True, max_search_time = 3, initial_board = None):

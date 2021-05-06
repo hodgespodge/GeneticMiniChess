@@ -1,5 +1,11 @@
 from operator import add, sub
 
+'''
+Author Samuel Hodges
+
+'''
+
+
 def print_board(board):
     board_dimensions = board.board_dimensions
     for y in range(board_dimensions[1],-1,-1):
