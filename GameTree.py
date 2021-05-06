@@ -5,8 +5,6 @@ import time
 def tt_flag_dict():
     return {"EXACT": 0, "LOWERBOUND": 1, "UPPERBOUND": 2}
 
-# TODO must program in check for 3 of same move in a row
-
 class GameTree():
 
     def __init__(self,heuristic_coefficients):
@@ -22,19 +20,12 @@ class GameTree():
 
         self.transposition_table[current_board_hash] = (current_board,0,0,None)
 
-        # put selection in while loop with increasing depth with timer for iterative deepening
-        ###############
-
         children = []
-
-        # import time
 
         start_time = time.time()
 
         iterative_depth  = 1
         while (True):
-
-            # print(start_time, time.time(), max_search_time )
 
             if time.time() - start_time > max_search_time:
                 break
@@ -101,8 +92,6 @@ class GameTree():
 
             if alpha >= beta:
                 return ttEntry[1] # TT value
- 
-         # terminal_board,winner = game_over(board=ttEntry[0],first_player=first_player)
 
         childNodes = self.generate_ordered_children(board=ttEntry[0],first_player=first_player)
 
@@ -166,8 +155,6 @@ class GameTree():
 
             if alpha >= beta:
                 return ttEntry[1] # TT value
-
-        # terminal_board,winner = game_over(board=ttEntry[0],first_player=first_player)
 
         childNodes = self.generate_ordered_children(board=ttEntry[0],first_player=first_player)
 

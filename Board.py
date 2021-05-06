@@ -92,9 +92,6 @@ class Board(dict):
     def _space_empty(self,coord):
         return not self.get(coord,-1) >= 0  #dict.get('key',default)
 
-
-
-
     def _move_into_check(self,move,first_player):
 
         temp_board = get_new_board_after_move(self,move,first_player)
@@ -220,7 +217,6 @@ class Board(dict):
 
             while(True):
 
-                # move = (coord,tuple(map(sum,zip(move[1],direction))),piece)  # Get destination
                 move = (coord, tuple_add(move[1],direction),piece)
 
                 if self._valid_destination(move,first_player):
@@ -273,7 +269,6 @@ class Board(dict):
 
         return moves
 
-    # TODO pawn moves are still probably fucked up
     def _pawn_moves(self,loc_piece,first_player): 
         coord = loc_piece[0]
         piece = loc_piece[1]
@@ -400,7 +395,6 @@ class Board(dict):
 
 
         for loc_piece in locations_pieces:
-            # moves.append(self._get_piece_moves(loc_piece,first_player))
             moves += self._get_piece_moves(loc_piece,first_player)
 
         return moves
