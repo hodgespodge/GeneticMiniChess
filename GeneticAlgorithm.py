@@ -32,7 +32,7 @@ def main():
     geneticAlgorithm()
 
 def geneticAlgorithm(initial_input_file = None, mutation_type = 'swap', selection_type = 'roulette', reproduction_type = 'single_point', mutation_rate = 0.3, is_testing= 'T'):
-    global output_file
+    global output_file, m_rate
 
     if is_testing == "T":
         now = "output_" + str(datetime.datetime.now())
@@ -212,7 +212,9 @@ def selection(population):
     return tournament_S(population)
 
 # General Mutation Methods
-    
+ '''
+ 
+ '''
 def single_point_M(child):
     mutation = random.randint(0,value_scale)
 
@@ -249,7 +251,12 @@ def scramble_M(child):
         i += 1
 
 # General Crossover Methods
-    
+'''
+First Crosssover function option. Single Point Crossover 
+randomly selects a crossover index and has the first part 
+of the child donate by 1 parent and the second part after 
+the index from the other parent.
+'''
 def single_point_C(parent_1, parent_2):
     child_1 = []
     child_2 = []
@@ -267,7 +274,11 @@ def single_point_C(parent_1, parent_2):
        
     return child_1, child_2    
     
-    
+'''
+Second Crosssover function option. Uniform Crossover 
+has a 50% probability that each value in the child 
+solution comes for either parent. 
+'''
 def uniform_C(parent_1, parent_2):
     child_1 = []
     child_2 = []
@@ -286,7 +297,12 @@ def uniform_C(parent_1, parent_2):
     return child_1, child_2
 
 # General Selection Methods
-    
+'''
+First Selection function option. Roulette Selection assigns a probability 
+to each solutions which is based on the fitness and the 
+overall fitnesses of the solutions. Because of this there is 
+a higher probability that fit solutions will be selected. 
+'''
 def roulette_S(population):
     sum_fitness = 0
     for _, individual in enumerate(population):
@@ -312,6 +328,13 @@ def roulette_S(population):
             
     return selected
 
+'''
+Second Selection function option. Tournament Selection continuously 
+selects a group of k individuals and selects the highest 
+fitness individual for crossover. This is done until 
+the specified number of solutions (population size) 
+are selected. 
+'''
 def tournament_S(population):
     # tournament size? paper says less then 10
     t_size = 3
@@ -320,19 +343,16 @@ def tournament_S(population):
     
     i = 0
     while i != size_pop:
-        tournament = []
         k = 0
-        index = 0
         best_fit = 0
         best_index = 0
         while k != t_size:
             index = random.randint(0, size_pop - 1)
-            tournament.append(population[index])
-         #   str_individual = ''.join([str(elem) for elem in population[index]])
+
             if fitness[tuple(population[index])] > best_fit:
                 best_fit = fitness[tuple(population[index])]
                 best_index = index
-            
+            k += 1
         selected.append(population[best_index])
         i += 1
     
