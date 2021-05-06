@@ -212,9 +212,9 @@ def selection(population):
     return tournament_S(population)
 
 # General Mutation Methods
- '''
- Commenting
- '''
+'''
+Commenting
+'''
 def single_point_M(child):
     mutation = random.randint(0,value_scale)
 
