@@ -13,8 +13,10 @@ class GameTree():
 
         self.transposition_table = {}
         self.heuristic_coefficients = heuristic_coefficients
+        self.past_moves = {}
+        self.two_fold_moves = set()
    
-    def get_best_move(self,current_board,max_search_time,first_player, verbose=False):
+    def get_best_move(self,current_board,max_search_time,first_player, verbose=0):
 
         current_board_hash = current_board.get_board_hash(first_player)
 
@@ -36,29 +38,50 @@ class GameTree():
                 break
             else:
                 children = self.root_negamax(current_board_hash,depth=iterative_depth,alpha=float("-inf"),beta=float("inf"),first_player=first_player,verbose=verbose)
-                # if verbose:
-                #     print("First player =",first_player,"searched up to depth:",iterative_depth)
+                
                 iterative_depth += 1
-        ################
 
-        if verbose:
+        if verbose > 2: 
 
             print(first_player,"searched to depth",iterative_depth)
 
-        best_value = self.transposition_table[children[0][0]][1] # use hash of first child to get its minmax score
+        if verbose > 3:
+            for child in children:
+                from MiscFunctions import get_english_notation
+                print(get_english_notation(child[1])," : ", self.transposition_table[child[0]][1])
+
         best_move = children[0][1]  # default best move is move of first child
+
+        if best_move in self.two_fold_moves: # must check if default move would cause draw
+            entry = self.transposition_table[children[0][0]] 
+            self.transposition_table[children[0][0]] = (entry[0], -0.5 ,entry[2],entry[3])
+
+        best_value = self.transposition_table[children[0][0]][1] # use hash of first child to get its minmax score
 
         for child in children:
 
-            # print("child:",child,"  Value:",self.transposition_table[child[0]][1])
+            if child[1] in self.two_fold_moves: #If move would cause three fold draw
+                entry = self.transposition_table[child[0]]
+                self.transposition_table[child[0]] = (entry[0], -0.5 ,entry[2],entry[3])
 
             if self.transposition_table[child[0]][1] > best_value:
                 best_value = self.transposition_table[child[0]][1]
                 best_move = child[1]
 
+
+        self.past_moves[best_move] = self.past_moves.get(best_move,0) + 1
+
+        if self.past_moves[best_move] == 4:
+            self.two_fold_moves.add(best_move)
+
+        if self.past_moves[best_move] == 5:
+            draw = True
+        else:
+            draw = False
+
         return best_move
 
-    def root_negamax(self,board_hash,depth,alpha,beta,first_player,verbose=False):
+    def root_negamax(self,board_hash,depth,alpha,beta,first_player,verbose=0):
 
         alphaOrig = alpha
 
@@ -77,16 +100,29 @@ class GameTree():
             if alpha >= beta:
                 return ttEntry[1] # TT value
  
-        terminal_board,winner = game_over(board=ttEntry[0])
-
-        if depth == 0 or terminal_board:
-            # must check if 1 is correct for first_player
-            if first_player:
-                return 1 * get_board_heuristic(ttEntry,self.heuristic_coefficients)
-            else:
-                return -1 * get_board_heuristic(ttEntry,self.heuristic_coefficients)
+         # terminal_board,winner = game_over(board=ttEntry[0],first_player=first_player)
 
         childNodes = self.generate_ordered_children(board=ttEntry[0],first_player=first_player)
+
+        if childNodes == None: # If no moves are possible, game must be over
+
+            if ttEntry[0]._player_king_threatened(first_player): # If king in check and no moves to leave check
+
+                if first_player:
+                    return float('-inf')
+                else:
+                    return float('inf')
+
+            else:
+                return 0 # Otherwise game is draw
+
+        if depth == 0:
+
+            # must check if 1 is correct for first_player
+            if first_player:
+                return 1 * get_board_heuristic(ttEntry[0],self.heuristic_coefficients)
+            else:
+                return -1 * get_board_heuristic(ttEntry[0],self.heuristic_coefficients)
         
         value = float("-inf")
 
@@ -111,7 +147,7 @@ class GameTree():
         return [(child[1],child[2]) for child in childNodes] # return list of (hash, move)
 
     # https://en.wikipedia.org/wiki/Negamax#Negamax_with_alpha_beta_pruning_and_transposition_tables
-    def negamax(self,board_hash,depth,alpha,beta,first_player,verbose=False):
+    def negamax(self,board_hash,depth,alpha,beta,first_player,verbose=0):
 
         alphaOrig = alpha
 
@@ -129,9 +165,23 @@ class GameTree():
             if alpha >= beta:
                 return ttEntry[1] # TT value
 
-        terminal_board,winner = game_over(board=ttEntry[0])
+        # terminal_board,winner = game_over(board=ttEntry[0],first_player=first_player)
 
-        if depth == 0 or terminal_board:
+        childNodes = self.generate_ordered_children(board=ttEntry[0],first_player=first_player)
+
+        if childNodes == None: # If no moves are possible, game must be over
+
+            if ttEntry[0]._player_king_threatened(first_player): # If king in check and no moves to leave check
+
+                if first_player:
+                    return float('-inf')
+                else:
+                    return float('inf')
+
+            else:
+                return 0 # Otherwise game is draw
+
+        if depth == 0:
 
             # must check if 1 is correct for first_player
             if first_player:
@@ -139,7 +189,6 @@ class GameTree():
             else:
                 return -1 * get_board_heuristic(ttEntry[0],self.heuristic_coefficients)
 
-        childNodes = self.generate_ordered_children(board=ttEntry[0],first_player=first_player)
 
         value = float("-inf")
 

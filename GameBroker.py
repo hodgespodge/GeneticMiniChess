@@ -1,6 +1,16 @@
 from GameTree import Player
 
-from Board import Board, get_new_board_after_move, game_over, print_board, get_english_notation
+from Board import Board, get_new_board_after_move, game_over
+from MiscFunctions import get_english_notation, print_board
+
+# Print out for makeshift progress bar
+def _progress_bar_print(winner):
+    if winner == 1:
+        print("W",end="",flush=True)
+    elif winner == -1:
+        print("B",end="",flush=True)
+    elif winner == 0:
+        print("D",end="",flush=True)
 
 class GameBroker():
 
@@ -12,59 +22,52 @@ class GameBroker():
 
         self.white_player = Player(self.white_heuristic_coefficients, max_search_time)
         self.black_player = Player(self.black_heuristic_coefficients, max_search_time)
-        
-    def simulate_game(self,verbose = False):
+    
+    # Print out for makeshift progress bar
 
+    def simulate_game(self,verbose = 0):
+
+        if verbose == False:
+            verbose = 0
 
         board = self.initial_board
 
-        if verbose:
+        if verbose > 0:
             print_board(board)
 
         while(True):
 
-            # print("|",flush=True,end="")
-
-            white_move = self.white_player.get_move(board,first_player = True,verbose=verbose)
-            if verbose:
-
+            white_move= self.white_player.get_move(board,first_player = True,verbose=verbose)
+            if verbose > 0:
                 print("White: ",get_english_notation(white_move))
 
             board = get_new_board_after_move(board, white_move, first_player= True)
 
-            if verbose:
+            if verbose > 1:
                 print_board(board)
 
-            check_mate, winner = game_over(board=board)
-            if check_mate:
+            end, winner = game_over(board=board, first_player=False)
+            if end:
 
-                # Print out for makeshift progress bar
-                if winner == 1:
-                    print("W",end="",flush=True)
-                elif winner == -1:
-                    print("B",end="",flush=True)
+                if verbose == -1:
+                    _progress_bar_print(winner)
 
                 return winner
 
             black_move = self.black_player.get_move(board, first_player= False, verbose=verbose)
 
-            if verbose:
+            if verbose > 0:
                 print("Black: ",get_english_notation(black_move))
             
             board = get_new_board_after_move(board, black_move, first_player= False)
 
-            if verbose:
+            if verbose > 1:
                 print_board(board)
 
-            check_mate, winner = game_over(board=board)
-            if check_mate:
+            end, winner = game_over(board=board, first_player= True)
+            if end:
 
-                # Print out for makeshift progress bar
-                if winner == 1:
-                    print("W",end="",flush=True)
-                elif winner == -1:
-                    print("B",end="",flush=True)
+                if verbose == -1:
+                    _progress_bar_print(winner)
 
                 return winner
-
-   
