@@ -2,7 +2,11 @@ from GameBroker import GameBroker
 import BoardPresets
 import multiprocessing as mp
 import os
-
+'''
+Simulates games for the given pairs of solutions. a
+Creates a game broker object for each solution pair 
+and uses Multiprocessing to simulate all the games.
+'''
 def GA_simulate(matches):
     max_search_time = 1 # Rough upperbound on iterative search (will not interupt search)
     
@@ -12,7 +16,7 @@ def GA_simulate(matches):
         brokers.append(game)
 
     # initial_board = BoardPresets.silverman4x5()
-    max_search_time = 0.5
+    # max_search_time = 1
 
     for broker in brokers:
         print(broker.white_heuristic_coefficients,"vs",broker.black_heuristic_coefficients)
@@ -46,7 +50,9 @@ def GA_simulate(matches):
             print("Black Won!")
 
     return results
-
+'''
+Simulates a single game given a game broker object.
+'''
 def sim_game(gameBroker):
 
     # print("starting process",os.getpid())
