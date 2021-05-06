@@ -36,6 +36,7 @@ def silverman4x4():
  
     return board
 
+
 def silverman4x5():
 
     board_dimensions = (4,5) # 4x5 game
@@ -137,5 +138,37 @@ def baby_chess():
     board[(2,4)] = 9 # black_bishop
     board[(3,4)] = 10 # black_knight
     board[(4,4)] = 8 # black_rook
+ 
+    return board
+
+def unfair():
+
+    board_dimensions = (4,4) # 4x4 game
+    
+    board = Board(board_dimensions= tuple_sub(board_dimensions,(1,1)),white_king_loc_piece=((2,0),0),black_king_loc_piece=((2,3),6)) # dimensions is 0 indexed
+
+    # Row 0
+    board[(0,0)] = 5 # white_pawn
+    board[(1,0)] = 5 # white_pawn
+    board[(2,0)] = 0 # white_king
+    board[(3,0)] = 5 # white_pawn
+
+    # Row 1
+    board[(0,1)] = 5 # white_pawn
+    board[(1,1)] = 5 # white_pawn
+    board[(2,1)] = 5 # white_pawn
+    board[(3,1)] = 5 # white_pawn
+
+    # Row 2
+    board[(0,2)] = 7 # black_queen
+    board[(1,2)] = 7 # black_queen
+    board[(2,2)] = 7 # black_queen
+    board[(3,2)] = 7 # black_queen
+
+    # Row 3
+    board[(0,3)] = 7 # black_queen
+    board[(1,3)] = 7 # black_queen
+    board[(2,3)] = 6 # black_king
+    board[(3,3)] = 7 # black_queen
  
     return board

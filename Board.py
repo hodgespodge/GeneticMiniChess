@@ -19,7 +19,7 @@ def get_new_board_after_move(board,move,first_player):
 
     return new_board
 
-# Checks if game is over for the player 
+# Checks if game is over for the player (called after some player takes a move to see if the next player has lost)
 def game_over(board,first_player):
 
     childNodes = board.get_all_moves(first_player)
@@ -170,7 +170,6 @@ class Board(dict):
         moves = []
 
         for direction in tuple_add(self._cardinal_directions(),self._diagonal_directions()): 
-            # move = (coord,tuple(map(sum,zip(coord,direction))),piece)  # Get destination
             move = (coord, tuple_add(coord,direction),piece)
 
             if self._valid_destination(move,first_player):
@@ -190,8 +189,7 @@ class Board(dict):
             move = (coord,coord,piece)
 
             while(True):
-
-                # move = (coord,tuple(map(sum,zip(move[1],direction))),piece)  # Get destination
+                
                 move = (coord, tuple_add(move[1],direction),piece)
 
                 if self._valid_destination(move,first_player):
