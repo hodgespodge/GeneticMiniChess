@@ -1,4 +1,5 @@
-from Board import Board, tuple_sub
+from Board import Board
+from MiscFunctions import tuple_sub
 
 # ["white_king","white_queen","white_rook","white_bishop","white_knight","white_pawn","black_king","black_queen","black_rook","black_bishop","black_knight","black_pawn"]
 
@@ -7,7 +8,7 @@ def silverman4x4():
 
     board_dimensions = (4,4) # 4x4 game
     
-    board = Board(board_dimensions= tuple_sub(board_dimensions,(1,1))) # dimensions is 0 indexed
+    board = Board(board_dimensions= tuple_sub(board_dimensions,(1,1)),white_king_loc_piece=((2,0),0),black_king_loc_piece=((2,3),6)) # dimensions is 0 indexed
 
     # Row 0
     board[(0,0)] = 2 # white_rook
@@ -39,7 +40,7 @@ def silverman4x5():
 
     board_dimensions = (4,5) # 4x5 game
 
-    board = Board(board_dimensions=tuple_sub(board_dimensions,(1,1))) # dimensions is 0 indexed
+    board = Board(board_dimensions=tuple_sub(board_dimensions,(1,1)),white_king_loc_piece=((2,0),0),black_king_loc_piece=((2,4),6)) # dimensions is 0 indexed
 
     # Row 0
     board[(0,0)] = 2 # white_rook
@@ -71,7 +72,7 @@ def gardner():
 
     board_dimensions = (5,5) # 5x5 game
 
-    board = Board(board_dimensions=tuple_sub(board_dimensions,(1,1))) # dimensions is 0 indexed
+    board = Board(board_dimensions=tuple_sub(board_dimensions,(1,1)),white_king_loc_piece=((4,0),0),black_king_loc_piece=((4,4),6)) # dimensions is 0 indexed
 
     # Row 0
     board[(0,0)] = 2 # white_rook
@@ -107,7 +108,7 @@ def baby_chess():
 
     board_dimensions = (5,5) # 5x5 game
 
-    board = Board(board_dimensions=tuple_sub(board_dimensions,(1,1))) # dimensions is 0 indexed
+    board = Board(board_dimensions=tuple_sub(board_dimensions,(1,1)),white_king_loc_piece=((4,0),0),black_king_loc_piece=((0,4),6)) # dimensions is 0 indexed
 
     # Row 0
     board[(0,0)] = 2 # white_rook
